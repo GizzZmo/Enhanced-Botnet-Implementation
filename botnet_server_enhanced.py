@@ -3,7 +3,8 @@
 Enhanced Botnet Command & Control Server
 - Threaded architecture for concurrent bot management
 - Event logging with timestamps
-- Stealth features: XOR-encrypted commands, pseudo-random priorities, JSON payloads
+- Stealth features: XOR-encrypted commands, pseudo-random priorities,
+  JSON payloads
 - Tracks connected bots, execution history, and last seen times
 - For research/educational use ONLY
 """
