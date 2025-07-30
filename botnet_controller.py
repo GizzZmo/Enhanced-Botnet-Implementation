@@ -7,7 +7,7 @@ Botnet Controller (Educational/Research Use Only)
 - Tracks active bots and execution history
 - Logs events with timestamps
 
-Author: Your Name
+Author: Jon Constantine
 """
 
 import socket
