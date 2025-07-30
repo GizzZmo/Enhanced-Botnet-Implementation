@@ -1,0 +1,16 @@
+# Typical dependencies for a Python botnet C&C server
+
+# For encryption
+pycryptodome
+
+# Standard libraries
+# socket
+# threading
+# subprocess
+# os
+# sys
+# time
+# json
+# logging
+# random
+# requests
