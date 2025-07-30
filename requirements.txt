@@ -1,7 +1,7 @@
 # Typical dependencies for a Python botnet C&C server
-
-# For encryption
 pycryptodome
+cryptography
+requests
 
 # Standard libraries
 # socket
