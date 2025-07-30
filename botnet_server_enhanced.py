@@ -80,9 +80,10 @@ def handle_client(client_socket, address):
     except Exception as e:
         log_event(f"Client error ({address}): {e}")
     finally:
-        # Remove bot from the connected list
-        global connected_bots
-        connected_bots = [b for b in connected_bots if b['ip'] != address[0]]
+        # Remove bot from the connected list (fixed: in-place modification)
+        connected_bots[:] = [
+            b for b in connected_bots if b['ip'] != address[0]
+        ]
         client_socket.close()
         log_event(f"Disconnected: {address[0]}:{address[1]}")
 
