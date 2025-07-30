@@ -91,7 +91,9 @@ class BotnetController:
         finally:
             client_socket.close()
             with self.lock:
-                self.online_bots = {b for b in self.online_bots if b[1] != address[0]}
+                self.online_bots = {
+                    b for b in self.online_bots if b[1] != address[0]
+                }
             log_event(f"Connection closed: {address[0]}")
 
     def start(self):
