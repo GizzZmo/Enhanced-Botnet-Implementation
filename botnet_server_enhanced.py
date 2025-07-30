@@ -89,7 +89,6 @@ def handle_client(client_socket, address):
 
 
 def start_server(host='0.0.0.0', port=9999):
-    global connected_bots
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
