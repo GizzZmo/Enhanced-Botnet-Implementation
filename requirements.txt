@@ -1,9 +1,35 @@
-# Typical dependencies for a Python botnet C&C server
-pycryptodome
-cryptography
-requests
+# Enhanced Botnet Implementation Dependencies
+# Pinned versions for security and reproducibility
 
-# Standard libraries
+# Cryptography
+cryptography==42.0.8
+pycryptodome==3.23.0
+
+# Networking and async support
+aiofiles==24.1.0
+asyncio-dgram==2.2.0
+
+# HTTP requests
+requests==2.32.3
+
+# Development and testing
+pytest==8.4.1
+pytest-asyncio==0.25.0
+pytest-cov==6.0.0
+
+# Code quality and security
+flake8==7.1.1
+black==24.10.0
+bandit==1.7.10
+safety==3.2.11
+
+# Type checking
+mypy==1.13.0
+
+# Configuration and environment
+python-dotenv==1.0.1
+
+# Standard libraries (no installation required)
 # socket
 # threading
 # subprocess
@@ -12,5 +38,10 @@ requests
 # time
 # json
 # logging
-# random
-# requests
+# hashlib
+# datetime
+# pathlib
+# ssl
+# base64
+# ipaddress
+# re
