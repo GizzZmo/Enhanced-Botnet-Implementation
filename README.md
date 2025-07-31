@@ -1,3 +1,4 @@
+[![CI](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci.yml/badge.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci.yml)
 # Enhanced Botnet Implementation
 
 > **Disclaimer & Legal Notice**  
