@@ -36,7 +36,7 @@ class TestPerformanceBasics(unittest.TestCase):
 
         # Should complete 100 operations in reasonable time
         total_time = end_time - start_time
-        self.assertLess(total_time, 1.0, "Encryption should be fast")
+        self.assertLess(total_time, 0.2, "Encryption should be fast (100 ops < 0.2s)")
 
         # Verify correctness
         self.assertEqual(decrypted, test_data)
