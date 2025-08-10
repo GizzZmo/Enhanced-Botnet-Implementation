@@ -251,7 +251,7 @@ Enhanced-Botnet-Implementation/
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/GizzZmo/Enhanced-Botnet-Implementation.git
+   git clone [repo].git
    cd Enhanced-Botnet-Implementation
    ```
 
