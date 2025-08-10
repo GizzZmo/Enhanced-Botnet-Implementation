@@ -217,8 +217,8 @@ class EnhancedBotnetServer:
             message_length = int.from_bytes(length_bytes, byteorder="big")
 
             # Validate message length
-            if message_length <= 0 or message_length > 1024 * 1024:  # 1MB limit
-                self.logger.warning(f"Invalid message length: {message_length}")
+            if message_length <= 0 or message_length > self.config.max_message_size:
+                self.logger.warning(f"Invalid message length: {message_length} (limit: {self.config.max_message_size})")
                 return None
 
             # Read encrypted data
