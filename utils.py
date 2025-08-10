@@ -13,7 +13,10 @@ import os
 import logging
 import hashlib
 import datetime
-import asyncio
+try:
+    import asyncio
+except ImportError:
+    asyncio = None
 import ssl
 import json
 import re
