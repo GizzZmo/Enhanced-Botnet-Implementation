@@ -2,22 +2,22 @@ name: CI
 
 on:
   push:
-    branches: [ "**" ]
+    branches: [main, develop, feature/**]
   pull_request:
-    branches: [ "**" ]
+    branches: [main, develop, feature/**]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
@@ -25,6 +25,11 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest
 
-      - name: Run tests
+      - name: Lint code with flake8
         run: |
-          if [ -d tests ]; then pytest; else echo "No tests directory found."; fi
+          pip install flake8
+          if [ -d src ]; then flake8 src; fi
+
+      - name: Run tests with pytest
+        run: |
+          if [ -d tests ]; then pytest --maxfail=5 --disable-warnings -v; else echo "No tests directory found."; fi
