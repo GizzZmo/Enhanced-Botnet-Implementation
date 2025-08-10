@@ -2,6 +2,7 @@
 pycryptodome
 cryptography
 requests
+pytest
 
 # Standard libraries
 # socket
