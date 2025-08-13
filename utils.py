@@ -346,7 +346,8 @@ class SecureLogger:
         # Remove potential sensitive patterns
         patterns = [
             (r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "[IP_REDACTED]"),  # IP addresses
-            (r"\b[A-Za-z0-9+/]{20,}={0,2}\b", "[KEY_REDACTED]"),  # Base64 keys
+            # Only redact Base64 strings that are likely keys (with context and longer length)
+            (r"\b(?:key|secret|token|private|api[_-]?key)\s*[:=]\s*[A-Za-z0-9+/]{32,}={0,2}\b", "[KEY_REDACTED]"),  # Contextual Base64 keys
             (r"\bpassword\s*[:=]\s*\S+", "password=[REDACTED]"),  # Passwords
             (r"\bkey\s*[:=]\s*[A-Za-z0-9+/]+={0,2}", "key=[KEY_REDACTED]"),  # Keys
         ]
