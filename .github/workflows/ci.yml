@@ -2,34 +2,21 @@ name: Enhanced CI/CD Pipeline
 
 on:
   push:
-    branches: [ "**" ]
-    tags: [ "*" ]
   pull_request:
-    branches: [ "**" ]
+    branches: [main, develop, feature/**]
 
 jobs:
-  code-quality:
+
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ matrix.python-version }}
 
-      - name: Cache dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
@@ -347,11 +334,3 @@ jobs:
           print('  - Security scanning in CI/CD')
           "
 
-      - name: Success notification
-        run: |
-          echo "🎉 Enhanced Botnet Implementation validation complete!"
-          echo "✅ All security improvements implemented"
-          echo "✅ All performance enhancements working"
-          echo "✅ All tests passing"
-          echo "✅ Code quality checks passed"
-          echo "✅ Security audits passed"
