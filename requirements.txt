@@ -18,4 +18,4 @@ mypy
 semgrep
 
 # Documentation coverage
-docstring-coverage==latest
+docstring-coverage==<latest-version>
