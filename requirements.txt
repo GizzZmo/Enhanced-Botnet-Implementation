@@ -1,11 +1,21 @@
-# Existing content from SHA 7ee9022c5b05fa6e98b25526122d7fcf4dda69f5
+# Testing tools
 pytest
 pytest-asyncio
 pytest-cov
+
+# Code style and linting
 flake8
 black
+
+# Security checks
 bandit
 safety
+
+# Type checking
 mypy
+
+# Static analysis
 semgrep
-docstring-coverage==2.3.2
+
+# Documentation coverage
+docstring-coverage==latest
