@@ -1,3 +1,11 @@
 # Existing content from SHA 7ee9022c5b05fa6e98b25526122d7fcf4dda69f5
-package1
-package2
+pytest
+pytest-asyncio
+pytest-cov
+flake8
+black
+bandit
+safety
+mypy
+semgrep
+docstring-coverage
