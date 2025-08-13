@@ -8,4 +8,4 @@ bandit
 safety
 mypy
 semgrep
-docstring-coverage
+docstring-coverage==0.2.4
