@@ -23,6 +23,9 @@ jobs:
           pip install --upgrade pip
           pip install pytest pytest-asyncio pytest-cov flake8 black bandit safety mypy
 
+      - name: Install black
+        run: pip install black
+
       - name: Code formatting check (Black)
         run: |
           black --check --diff .
