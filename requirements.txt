@@ -1,6 +1,6 @@
 # Code style and linting
 flake8==6.1.0
-
+black
 
 # Security checks
 bandit
