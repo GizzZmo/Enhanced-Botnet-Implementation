@@ -13,7 +13,7 @@ mypy
 semgrep
 
 # Documentation coverage
-docstring-coverage-2.3.2
+pydocstyle
 
 # Testing tools
 pytest==7.3.1
