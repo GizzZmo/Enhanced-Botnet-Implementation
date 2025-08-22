@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Botnet C&C Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000000;
+            color: #00ff00;
+            font-family: 'Share Tech Mono', monospace;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* Matrix Rain Effect */
+        #matrix-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(45deg, #001100, #003300);
+            border-bottom: 2px solid #00ff00;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 0 20px #00ff00;
+        }
+        
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-shadow: 0 0 20px #00ff00;
+            animation: pulse 2s infinite;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #00cccc;
+            margin-top: 10px;
+            text-shadow: 0 0 10px #00cccc;
+        }
+        
+        /* Main Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Cards */
+        .card {
+            background: linear-gradient(135deg, #001100, #002200);
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.5);
+            border-color: #00ffff;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .card:hover::before {
+            left: 100%;
+        }
+        
+        .card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00ffff;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px #00ffff;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 10px;
+        }
+        
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px dotted #004400;
+        }
+        
+        .stat-label {
+            color: #00cccc;
+            font-weight: bold;
+        }
+        
+        .stat-value {
+            color: #00ff00;
+            font-weight: bold;
+            text-shadow: 0 0 5px #00ff00;
+        }
+        
+        .stat-value.critical {
+            color: #ff0066;
+            text-shadow: 0 0 5px #ff0066;
+            animation: blink 1s infinite;
+        }
+        
+        .stat-value.warning {
+            color: #ffff00;
+            text-shadow: 0 0 5px #ffff00;
+        }
+        
+        /* Progress Bars */
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #001100;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00ff00, #00ffff);
+            box-shadow: 0 0 10px #00ff00;
+            transition: width 0.5s ease;
+        }
+        
+        /* Bot List */
+        .bot-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .bot-item {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #004400;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .bot-item:hover {
+            background: rgba(0, 255, 0, 0.2);
+            border-color: #00ff00;
+        }
+        
+        .bot-id {
+            color: #00ffff;
+            font-weight: bold;
+        }
+        
+        .bot-status {
+            color: #00ff00;
+            font-size: 0.9rem;
+        }
+        
+        .bot-status.offline {
+            color: #ff0066;
+        }
+        
+        /* Command History */
+        .command-history {
+            max-height: 200px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid #004400;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        
+        .command-item {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 2px solid #00ff00;
+            padding-left: 10px;
+        }
+        
+        .command-time {
+            color: #666666;
+            font-size: 0.8rem;
+        }
+        
+        .command-text {
+            color: #00ff00;
+            margin: 2px 0;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 20px #00ff00; }
+            50% { text-shadow: 0 0 40px #00ff00, 0 0 60px #00ff00; }
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse-dot 2s infinite;
+        }
+        
+        .status-indicator.online {
+            background: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        
+        .status-indicator.offline {
+            background: #ff0066;
+            box-shadow: 0 0 10px #ff0066;
+        }
+        
+        .status-indicator.warning {
+            background: #ffff00;
+            box-shadow: 0 0 10px #ffff00;
+        }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            border-top: 1px solid #004400;
+            margin-top: 40px;
+            color: #666666;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Matrix Rain Canvas -->
+    <canvas id="matrix-canvas"></canvas>
+    
+    <!-- Header -->
+    <div class="header">
+        <h1>🛡️ ENHANCED BOTNET C&C</h1>
+        <div class="subtitle">Command & Control Dashboard - Educational Research Platform</div>
+    </div>
+    
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+        <!-- Server Status Card -->
+        <div class="card">
+            <div class="card-title">🖥️ Server Status</div>
+            <div class="stat">
+                <span class="stat-label">Status:</span>
+                <span class="stat-value" id="server-status">
+                    <span class="status-indicator online"></span>ONLINE
+                </span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Uptime:</span>
+                <span class="stat-value" id="uptime">--</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Version:</span>
+                <span class="stat-value" id="version">2.0 Enhanced</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Encryption:</span>
+                <span class="stat-value" id="encryption-status">AES-256-CBC</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">TLS:</span>
+                <span class="stat-value" id="tls-status">--</span>
+            </div>
+        </div>
+        
+        <!-- Bot Statistics Card -->
+        <div class="card">
+            <div class="card-title">🤖 Bot Network</div>
+            <div class="stat">
+                <span class="stat-label">Active Bots:</span>
+                <span class="stat-value" id="active-bots">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Total Connections:</span>
+                <span class="stat-value" id="total-connections">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Commands Processed:</span>
+                <span class="stat-value" id="commands-processed">0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="connection-progress" style="width: 0%"></div>
+            </div>
+            <small style="color: #666;">Connection Utilization</small>
+        </div>
+        
+        <!-- Performance Metrics Card -->
+        <div class="card">
+            <div class="card-title">📊 Performance</div>
+            <div class="stat">
+                <span class="stat-label">Bytes Sent:</span>
+                <span class="stat-value" id="bytes-sent">0 B</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Bytes Received:</span>
+                <span class="stat-value" id="bytes-received">0 B</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Data Rate:</span>
+                <span class="stat-value" id="data-rate">0 KB/s</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Memory Usage:</span>
+                <span class="stat-value" id="memory-usage">--</span>
+            </div>
+        </div>
+        
+        <!-- Active Bots Card -->
+        <div class="card">
+            <div class="card-title">🌐 Active Bots</div>
+            <div class="bot-list" id="bot-list">
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    No active bots connected
+                </div>
+            </div>
+        </div>
+        
+        <!-- Security Status Card -->
+        <div class="card">
+            <div class="card-title">🔒 Security</div>
+            <div class="stat">
+                <span class="stat-label">Auth Status:</span>
+                <span class="stat-value" id="auth-status">--</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Failed Attempts:</span>
+                <span class="stat-value warning" id="failed-attempts">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Blocked IPs:</span>
+                <span class="stat-value" id="blocked-ips">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Threat Level:</span>
+                <span class="stat-value" id="threat-level">LOW</span>
+            </div>
+        </div>
+        
+        <!-- Recent Commands Card -->
+        <div class="card">
+            <div class="card-title">📝 Command History</div>
+            <div class="command-history" id="command-history">
+                <div style="text-align: center; color: #666; padding: 20px;">
+                    No recent commands
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        🎓 Educational Research Platform | Enhanced Botnet Implementation v2.0<br>
+        <small>For cybersecurity education and research purposes only</small>
+    </div>
+    
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+        const matrixArray = matrix.split("");
+        
+        const fontSize = 10;
+        const columns = canvas.width / fontSize;
+        
+        const drops = [];
+        for(let x = 0; x < columns; x++) {
+            drops[x] = 1; 
+        }
+        
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#00ff00';
+            ctx.font = fontSize + 'px monospace';
+            
+            for(let i = 0; i < drops.length; i++) {
+                const text = matrixArray[Math.floor(Math.random() * matrixArray.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        
+        setInterval(drawMatrix, 35);
+        
+        // Resize canvas on window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        
+        // Dashboard Data Management
+        let dashboardData = {
+            serverStatus: 'ONLINE',
+            uptime: 0,
+            activeBots: 0,
+            totalConnections: 0,
+            commandsProcessed: 0,
+            bytesSent: 0,
+            bytesReceived: 0,
+            authStatus: 'AUTHENTICATED',
+            tlsEnabled: false,
+            bots: [],
+            commandHistory: []
+        };
+        
+        // Utility Functions
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        function formatUptime(seconds) {
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = Math.floor(seconds % 60);
+            
+            if (days > 0) {
+                return `${days}d ${hours}h ${minutes}m`;
+            } else if (hours > 0) {
+                return `${hours}h ${minutes}m ${secs}s`;
+            } else {
+                return `${minutes}m ${secs}s`;
+            }
+        }
+        
+        // Update Dashboard UI
+        function updateDashboard() {
+            // Server Status
+            document.getElementById('uptime').textContent = formatUptime(dashboardData.uptime);
+            document.getElementById('tls-status').textContent = dashboardData.tlsEnabled ? 'ENABLED' : 'DISABLED';
+            document.getElementById('auth-status').textContent = dashboardData.authStatus;
+            
+            // Bot Statistics
+            document.getElementById('active-bots').textContent = dashboardData.activeBots;
+            document.getElementById('total-connections').textContent = dashboardData.totalConnections;
+            document.getElementById('commands-processed').textContent = dashboardData.commandsProcessed;
+            
+            // Connection utilization progress bar
+            const utilization = Math.min((dashboardData.totalConnections / 100) * 100, 100);
+            document.getElementById('connection-progress').style.width = utilization + '%';
+            
+            // Performance
+            document.getElementById('bytes-sent').textContent = formatBytes(dashboardData.bytesSent);
+            document.getElementById('bytes-received').textContent = formatBytes(dashboardData.bytesReceived);
+            
+            // Update bot list
+            updateBotList();
+            
+            // Update command history
+            updateCommandHistory();
+        }
+        
+        function updateBotList() {
+            const botList = document.getElementById('bot-list');
+            
+            if (dashboardData.bots.length === 0) {
+                botList.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No active bots connected</div>';
+                return;
+            }
+            
+            let html = '';
+            dashboardData.bots.forEach(bot => {
+                html += `
+                    <div class="bot-item">
+                        <div class="bot-id">🤖 ${bot.id}</div>
+                        <div class="bot-status">📍 ${bot.ip} | ⏰ ${bot.lastSeen}</div>
+                        <div class="bot-status">📊 ${bot.commandsSent} sent, ${bot.commandsCompleted} completed</div>
+                    </div>
+                `;
+            });
+            botList.innerHTML = html;
+        }
+        
+        function updateCommandHistory() {
+            const commandHistory = document.getElementById('command-history');
+            
+            if (dashboardData.commandHistory.length === 0) {
+                commandHistory.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">No recent commands</div>';
+                return;
+            }
+            
+            let html = '';
+            dashboardData.commandHistory.slice(-10).reverse().forEach(cmd => {
+                html += `
+                    <div class="command-item">
+                        <div class="command-time">${cmd.timestamp}</div>
+                        <div class="command-text">🤖 ${cmd.botId}: ${cmd.command}</div>
+                    </div>
+                `;
+            });
+            commandHistory.innerHTML = html;
+        }
+        
+        // Fetch data from server
+        async function fetchServerData() {
+            try {
+                const response = await fetch('/api/status');
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Update dashboard data
+                    dashboardData.activeBots = data.active_bots || 0;
+                    dashboardData.totalConnections = data.total_connections || 0;
+                    dashboardData.commandsProcessed = data.commands_processed || 0;
+                    dashboardData.bytesSent = data.bytes_sent || 0;
+                    dashboardData.bytesReceived = data.bytes_received || 0;
+                    dashboardData.uptime = data.uptime_seconds || 0;
+                    dashboardData.tlsEnabled = data.tls_enabled || false;
+                    dashboardData.authStatus = data.admin_authenticated ? 'AUTHENTICATED' : 'NOT AUTHENTICATED';
+                    
+                    // Update bots if available
+                    if (data.bots) {
+                        dashboardData.bots = Object.values(data.bots).map(bot => ({
+                            id: bot.id,
+                            ip: bot.ip,
+                            lastSeen: new Date(bot.last_seen).toLocaleTimeString(),
+                            commandsSent: bot.commands_sent,
+                            commandsCompleted: bot.commands_completed
+                        }));
+                    }
+                    
+                    // Update command history if available
+                    if (data.command_history) {
+                        dashboardData.commandHistory = data.command_history.map(cmd => ({
+                            timestamp: new Date(cmd.timestamp).toLocaleTimeString(),
+                            botId: cmd.bot_id,
+                            command: cmd.command
+                        }));
+                    }
+                    
+                    updateDashboard();
+                } else {
+                    // Simulate some demo data if server not available
+                    simulateDemoData();
+                }
+            } catch (error) {
+                console.log('Server not available, using demo data');
+                simulateDemoData();
+            }
+        }
+        
+        // Simulate demo data for display
+        function simulateDemoData() {
+            dashboardData.uptime += 1;
+            dashboardData.activeBots = Math.floor(Math.random() * 5) + 1;
+            dashboardData.totalConnections = dashboardData.activeBots + Math.floor(Math.random() * 3);
+            dashboardData.commandsProcessed += Math.floor(Math.random() * 3);
+            dashboardData.bytesSent += Math.floor(Math.random() * 1024);
+            dashboardData.bytesReceived += Math.floor(Math.random() * 512);
+            
+            // Simulate some bots
+            dashboardData.bots = [];
+            for (let i = 0; i < dashboardData.activeBots; i++) {
+                dashboardData.bots.push({
+                    id: `bot_${Math.random().toString(16).slice(2, 8)}`,
+                    ip: `192.168.1.${100 + i}`,
+                    lastSeen: new Date().toLocaleTimeString(),
+                    commandsSent: Math.floor(Math.random() * 10),
+                    commandsCompleted: Math.floor(Math.random() * 8)
+                });
+            }
+            
+            // Add occasional command to history
+            if (Math.random() > 0.7) {
+                dashboardData.commandHistory.push({
+                    timestamp: new Date().toLocaleTimeString(),
+                    botId: `bot_${Math.random().toString(16).slice(2, 6)}`,
+                    command: ['!status', '!system_info', '!network_config'][Math.floor(Math.random() * 3)]
+                });
+            }
+            
+            updateDashboard();
+        }
+        
+        // Initialize dashboard
+        updateDashboard();
+        
+        // Fetch data every 2 seconds
+        setInterval(fetchServerData, 2000);
+        
+        // Initial fetch
+        fetchServerData();
+    </script>
+</body>
+</html>

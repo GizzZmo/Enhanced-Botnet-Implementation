@@ -61,6 +61,8 @@ class SecureConfig:
                 "TLS_KEY_PATH": os.getenv("BOTNET_TLS_KEY"),
                 "LOG_LEVEL": os.getenv("BOTNET_LOG_LEVEL", "INFO"),
                 "MAX_CONNECTIONS": int(os.getenv("BOTNET_MAX_CONNECTIONS", "100")),
+                "WEB_PORT": int(os.getenv("BOTNET_WEB_PORT", "8080")),
+                "MAX_MESSAGE_SIZE": int(os.getenv("BOTNET_MAX_MESSAGE_SIZE", "1048576")),  # 1MB default
             }
         )
 
@@ -75,6 +77,8 @@ class SecureConfig:
                         "SERVER_PORT",
                         "LOG_LEVEL",
                         "MAX_CONNECTIONS",
+                        "WEB_PORT",
+                        "MAX_MESSAGE_SIZE",
                     ]
                     for key in safe_keys:
                         if key in file_config:
@@ -85,6 +89,11 @@ class SecureConfig:
     def get(self, key: str, default: Any = None) -> Any:
         """Get configuration value."""
         return self._config.get(key, default)
+
+    @property
+    def max_message_size(self) -> int:
+        """Get maximum message size."""
+        return self._config.get("MAX_MESSAGE_SIZE", 1048576)
 
     def get_encryption_key(self) -> bytes:
         """Get or generate encryption key."""
