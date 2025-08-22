@@ -69,3 +69,6 @@ config/secrets.json
 # Temporary files
 /tmp/
 temp/
+
+# Test utilities
+bot_simulator.py
