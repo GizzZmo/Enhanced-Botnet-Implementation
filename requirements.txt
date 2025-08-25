@@ -1,16 +1,28 @@
-# Typical dependencies for a Python botnet C&C server
-pycryptodome
-cryptography
-requests
+# Core dependencies
+cryptography>=3.4.8
 
-# Standard libraries
-# socket
-# threading
-# subprocess
-# os
-# sys
-# time
-# json
-# logging
-# random
-# requests
+# Web dashboard dependencies  
+aiohttp>=3.8.0
+aiohttp-cors>=0.7.0
+
+# Code style and linting
+flake8==6.1.0
+black
+
+# Security checks
+bandit
+safety
+
+# Type checking
+mypy
+
+# Static analysis
+semgrep
+
+# Documentation coverage
+pydocstyle
+
+# Testing tools
+pytest==7.3.1
+pytest-asyncio
+pytest-cov

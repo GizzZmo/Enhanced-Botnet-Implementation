@@ -1,8 +1,10 @@
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
 .Python
 build/
 develop-eggs/
@@ -32,12 +34,45 @@ ENV/
 env.bak/
 venv.bak/
 
-# IDE
+
+# IDE files
+
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
+*~
+
+# OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+
+# Testing
+.tox/
+.nox/
+.coverage
+.pytest_cache/
+cover/
+htmlcov/
+
+# Logs
+*.log
+logs/
+
+# Configuration files with secrets
+.env.local
+.env.production
+config/secrets.json
+
+# Temporary files
+/tmp/
+temp/
+
+# Test utilities
+bot_simulator.py
