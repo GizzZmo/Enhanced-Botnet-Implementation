@@ -9,10 +9,9 @@ are introduced by the enhancements.
 import unittest
 import asyncio
 import os
-import tempfile
 import json
 import base64
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from utils import (
     SecureConfig,
@@ -168,7 +167,6 @@ class TestSecurityFeatures(unittest.TestCase):
     def test_secure_config_defaults(self):
         """Test secure configuration defaults."""
         # Clear environment variables
-        env_keys = ["BOTNET_HOST", "BOTNET_PORT", "BOTNET_ENCRYPTION_KEY"]
         with patch.dict(os.environ, {}, clear=True):
             config = SecureConfig()
 

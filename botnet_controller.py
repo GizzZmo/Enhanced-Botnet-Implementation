@@ -161,8 +161,9 @@ class BotnetController:
         """
         while True:
             try:
-                # Get command from admin (in real implementation, this would be from a queue or API)
-                # For demo purposes, we'll use a simple input with timeout
+                # Get command from admin (in real implementation, this would be
+                # from a queue or API). For demo purposes, we'll use a simple
+                # input with timeout
                 cmd = await self._get_admin_command(bot_id)
 
                 if not cmd or cmd.lower() in ["quit", "exit"]:

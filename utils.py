@@ -23,7 +23,6 @@ import re
 from typing import Optional, Union, Dict, Any, List
 from pathlib import Path
 
-from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -62,7 +61,9 @@ class SecureConfig:
                 "LOG_LEVEL": os.getenv("BOTNET_LOG_LEVEL", "INFO"),
                 "MAX_CONNECTIONS": int(os.getenv("BOTNET_MAX_CONNECTIONS", "100")),
                 "WEB_PORT": int(os.getenv("BOTNET_WEB_PORT", "8080")),
-                "MAX_MESSAGE_SIZE": int(os.getenv("BOTNET_MAX_MESSAGE_SIZE", "1048576")),  # 1MB default
+                "MAX_MESSAGE_SIZE": int(
+                    os.getenv("BOTNET_MAX_MESSAGE_SIZE", "1048576")
+                ),  # 1MB default
             }
         )
 
@@ -355,8 +356,13 @@ class SecureLogger:
         # Remove potential sensitive patterns
         patterns = [
             (r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "[IP_REDACTED]"),  # IP addresses
-            # Only redact Base64 strings that are likely keys (with context and longer length)
-            (r"\b(?:key|secret|token|private|api[_-]?key)\s*[:=]\s*[A-Za-z0-9+/]{32,}={0,2}\b", "[KEY_REDACTED]"),  # Contextual Base64 keys
+            # Only redact Base64 strings that are likely keys (with context and
+            # longer length)
+            (
+                r"\b(?:key|secret|token|private|api[_-]?key)\s*[:=]\s*"
+                r"[A-Za-z0-9+/]{32,}={0,2}\b",
+                "[KEY_REDACTED]",
+            ),  # Contextual Base64 keys
             (r"\bpassword\s*[:=]\s*\S+", "password=[REDACTED]"),  # Passwords
             (r"\bkey\s*[:=]\s*[A-Za-z0-9+/]+={0,2}", "key=[KEY_REDACTED]"),  # Keys
         ]
