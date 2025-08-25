@@ -148,6 +148,7 @@ class BotnetController:
         except Exception as e:
             self.logger.error(f"Error handling bot {bot_id}: {str(e)}")
         finally:
+
             await self._cleanup_connection(bot_id, writer)
 
     async def _command_loop(self, bot_id: str, writer: asyncio.StreamWriter) -> None:
@@ -219,6 +220,7 @@ class BotnetController:
         # - Database polling
 
         # For demo purposes, simulate with a simple input
+
         try:
             # Use asyncio to make input non-blocking
             loop = asyncio.get_event_loop()

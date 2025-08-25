@@ -1,9 +1,10 @@
-# Python cache files
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
 
-# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -33,11 +34,14 @@ ENV/
 env.bak/
 venv.bak/
 
+
 # IDE files
+
 .vscode/
 .idea/
 *.swp
 *.swo
+
 *~
 
 # OS files

