@@ -56,6 +56,7 @@ Thumbs.db
 .pytest_cache/
 cover/
 htmlcov/
+coverage.xml
 
 # Logs
 *.log
@@ -69,6 +70,12 @@ config/secrets.json
 # Temporary files
 /tmp/
 temp/
+
+# Security and CI reports
+bandit-report.json
+bandit-detailed.json
+safety-report.json
+semgrep-report.json
 
 # Test utilities
 bot_simulator.py

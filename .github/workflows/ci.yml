@@ -48,8 +48,8 @@ jobs:
 
       - name: Dependency security check (Safety)
         run: |
-          safety check --json --output safety-report.json || true
-          safety check
+          safety scan --json --output safety-report.json || true
+          safety scan
 
       - name: Run tests with coverage
         run: |
