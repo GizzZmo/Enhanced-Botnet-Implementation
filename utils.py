@@ -53,7 +53,7 @@ class SecureConfig:
         # Load from environment variables first
         self._config.update(
             {
-                "SERVER_HOST": os.getenv("BOTNET_HOST", "0.0.0.0"),
+                "SERVER_HOST": os.getenv("BOTNET_HOST", "127.0.0.1"),
                 "SERVER_PORT": int(os.getenv("BOTNET_PORT", "9999")),
                 "ENCRYPTION_KEY": os.getenv("BOTNET_ENCRYPTION_KEY"),
                 "ADMIN_PASSWORD": os.getenv("BOTNET_ADMIN_PASSWORD"),

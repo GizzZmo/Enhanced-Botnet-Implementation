@@ -172,7 +172,7 @@ class TestSecurityFeatures(unittest.TestCase):
         with patch.dict(os.environ, {}, clear=True):
             config = SecureConfig()
 
-            self.assertEqual(config.get("SERVER_HOST"), "0.0.0.0")
+            self.assertEqual(config.get("SERVER_HOST"), "127.0.0.1")
             self.assertEqual(config.get("SERVER_PORT"), 9999)
             self.assertEqual(config.get("LOG_LEVEL"), "INFO")
 

