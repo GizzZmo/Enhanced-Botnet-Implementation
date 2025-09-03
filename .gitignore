@@ -76,3 +76,4 @@ temp/
 
 # Test utilities
 bot_simulator.py
+test_threading_issue.py

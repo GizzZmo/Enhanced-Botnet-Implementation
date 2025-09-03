@@ -13,6 +13,7 @@ import os
 import logging
 import hashlib
 import datetime
+import threading
 try:
     import asyncio
 except ImportError:
@@ -387,90 +388,114 @@ class SecureLogger:
 class BotTracker:
     """
     Efficient bot tracking using sets and dictionaries for fast lookups.
+    Thread-safe implementation using both asyncio.Lock and threading.Lock
+    to handle concurrent access from multiple threads and async operations.
+    
+    This implementation addresses the critical bug where disconnected bots
+    were not being properly removed from the active list due to lack of
+    proper thread synchronization. The dual-lock approach ensures safety
+    in both single-threaded async environments and multi-threaded scenarios.
+    
+    Thread Safety:
+    - Uses threading.RLock for protection across multiple threads
+    - Uses asyncio.Lock for async operations within each thread
+    - All public methods are protected by appropriate locks
+    - Supports concurrent access from multiple event loops in different threads
     """
 
     def __init__(self):
-        """Initialize bot tracker."""
+        """Initialize bot tracker with proper synchronization."""
         self.active_bots: Dict[str, Dict[str, Any]] = {}
         self.connection_history: List[Dict[str, Any]] = []
-        self._lock = asyncio.Lock()
+        
+        # Use both asyncio.Lock and threading.Lock for comprehensive protection
+        self._async_lock = asyncio.Lock()
+        self._thread_lock = threading.RLock()  # RLock allows recursive acquisition
 
     async def add_bot(
         self, bot_id: str, ip_address: str, metadata: Optional[Dict[str, Any]] = None
     ) -> None:
         """
-        Add or update bot information.
+        Add or update bot information with thread-safe protection.
 
         Args:
             bot_id: Unique bot identifier
             ip_address: Bot IP address
             metadata: Optional additional metadata
         """
-        async with self._lock:
-            bot_info = {
-                "id": bot_id,
-                "ip": ip_address,
-                "connected_at": datetime.datetime.now().isoformat(),
-                "last_seen": datetime.datetime.now().isoformat(),
-                "commands_sent": 0,
-                "commands_completed": 0,
-                "metadata": metadata or {},
-            }
-
-            self.active_bots[bot_id] = bot_info
-            self.connection_history.append(
-                {
-                    "bot_id": bot_id,
+        # Use both threading lock and async lock for comprehensive protection
+        with self._thread_lock:
+            async with self._async_lock:
+                bot_info = {
+                    "id": bot_id,
                     "ip": ip_address,
-                    "event": "connected",
-                    "timestamp": bot_info["connected_at"],
+                    "connected_at": datetime.datetime.now().isoformat(),
+                    "last_seen": datetime.datetime.now().isoformat(),
+                    "commands_sent": 0,
+                    "commands_completed": 0,
+                    "metadata": metadata or {},
                 }
-            )
+
+                self.active_bots[bot_id] = bot_info
+                self.connection_history.append(
+                    {
+                        "bot_id": bot_id,
+                        "ip": ip_address,
+                        "event": "connected",
+                        "timestamp": bot_info["connected_at"],
+                    }
+                )
 
     async def remove_bot(self, bot_id: str) -> None:
         """
-        Remove bot from active tracking.
+        Remove bot from active tracking with thread-safe protection.
 
         Args:
             bot_id: Bot identifier to remove
         """
-        async with self._lock:
-            if bot_id in self.active_bots:
-                bot_info = self.active_bots.pop(bot_id)
-                self.connection_history.append(
-                    {
-                        "bot_id": bot_id,
-                        "ip": bot_info["ip"],
-                        "event": "disconnected",
-                        "timestamp": datetime.datetime.now().isoformat(),
-                    }
-                )
+        # Use both threading lock and async lock for comprehensive protection
+        with self._thread_lock:
+            async with self._async_lock:
+                if bot_id in self.active_bots:
+                    bot_info = self.active_bots.pop(bot_id)
+                    self.connection_history.append(
+                        {
+                            "bot_id": bot_id,
+                            "ip": bot_info["ip"],
+                            "event": "disconnected",
+                            "timestamp": datetime.datetime.now().isoformat(),
+                        }
+                    )
 
     async def update_bot_activity(self, bot_id: str, activity: str = "ping") -> None:
         """
-        Update bot's last seen time and activity.
+        Update bot's last seen time and activity with thread-safe protection.
 
         Args:
             bot_id: Bot identifier
             activity: Type of activity
         """
-        async with self._lock:
-            if bot_id in self.active_bots:
-                self.active_bots[bot_id][
-                    "last_seen"
-                ] = datetime.datetime.now().isoformat()
-                if activity == "command_sent":
-                    self.active_bots[bot_id]["commands_sent"] += 1
-                elif activity == "command_completed":
-                    self.active_bots[bot_id]["commands_completed"] += 1
+        # Use both threading lock and async lock for comprehensive protection
+        with self._thread_lock:
+            async with self._async_lock:
+                if bot_id in self.active_bots:
+                    self.active_bots[bot_id][
+                        "last_seen"
+                    ] = datetime.datetime.now().isoformat()
+                    if activity == "command_sent":
+                        self.active_bots[bot_id]["commands_sent"] += 1
+                    elif activity == "command_completed":
+                        self.active_bots[bot_id]["commands_completed"] += 1
 
     def get_active_bots(self) -> Dict[str, Dict[str, Any]]:
-        """Get dictionary of all active bots."""
-        return self.active_bots.copy()
+        """Get dictionary of all active bots with thread-safe access."""
+        with self._thread_lock:
+            return self.active_bots.copy()
 
     def get_bot_count(self) -> int:
-        """Get count of active bots."""
-        return len(self.active_bots)
+        """Get count of active bots with thread-safe access."""
+        with self._thread_lock:
+            return len(self.active_bots)
 
 
 class TLSHelper:
