@@ -14,6 +14,7 @@ import logging
 import hashlib
 import datetime
 import threading
+
 try:
     import asyncio
 except ImportError:
@@ -24,7 +25,6 @@ import re
 from typing import Optional, Union, Dict, Any, List
 from pathlib import Path
 
-from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
@@ -63,7 +63,9 @@ class SecureConfig:
                 "LOG_LEVEL": os.getenv("BOTNET_LOG_LEVEL", "INFO"),
                 "MAX_CONNECTIONS": int(os.getenv("BOTNET_MAX_CONNECTIONS", "100")),
                 "WEB_PORT": int(os.getenv("BOTNET_WEB_PORT", "8080")),
-                "MAX_MESSAGE_SIZE": int(os.getenv("BOTNET_MAX_MESSAGE_SIZE", "1048576")),  # 1MB default
+                "MAX_MESSAGE_SIZE": int(
+                    os.getenv("BOTNET_MAX_MESSAGE_SIZE", "1048576")
+                ),  # 1MB default
             }
         )
 
@@ -357,7 +359,10 @@ class SecureLogger:
         patterns = [
             (r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "[IP_REDACTED]"),  # IP addresses
             # Only redact Base64 strings that are likely keys (with context and longer length)
-            (r"\b(?:key|secret|token|private|api[_-]?key)\s*[:=]\s*[A-Za-z0-9+/]{32,}={0,2}\b", "[KEY_REDACTED]"),  # Contextual Base64 keys
+            (
+                r"\b(?:key|secret|token|private|api[_-]?key)\s*[:=]\s*[A-Za-z0-9+/]{32,}={0,2}\b",
+                "[KEY_REDACTED]",
+            ),  # Contextual Base64 keys
             (r"\bpassword\s*[:=]\s*\S+", "password=[REDACTED]"),  # Passwords
             (r"\bkey\s*[:=]\s*[A-Za-z0-9+/]+={0,2}", "key=[KEY_REDACTED]"),  # Keys
         ]
@@ -390,12 +395,12 @@ class BotTracker:
     Efficient bot tracking using sets and dictionaries for fast lookups.
     Thread-safe implementation using both asyncio.Lock and threading.Lock
     to handle concurrent access from multiple threads and async operations.
-    
+
     This implementation addresses the critical bug where disconnected bots
     were not being properly removed from the active list due to lack of
     proper thread synchronization. The dual-lock approach ensures safety
     in both single-threaded async environments and multi-threaded scenarios.
-    
+
     Thread Safety:
     - Uses threading.RLock for protection across multiple threads
     - Uses asyncio.Lock for async operations within each thread
@@ -407,7 +412,7 @@ class BotTracker:
         """Initialize bot tracker with proper synchronization."""
         self.active_bots: Dict[str, Dict[str, Any]] = {}
         self.connection_history: List[Dict[str, Any]] = []
-        
+
         # Use both asyncio.Lock and threading.Lock for comprehensive protection
         self._async_lock = asyncio.Lock()
         self._thread_lock = threading.RLock()  # RLock allows recursive acquisition
