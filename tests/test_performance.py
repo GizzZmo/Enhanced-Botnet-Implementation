@@ -9,7 +9,6 @@ provide better scalability and resource efficiency.
 import unittest
 import asyncio
 import time
-import threading
 import gc
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -93,7 +92,9 @@ class TestPerformanceAsync(unittest.IsolatedAsyncioTestCase):
 
         tasks = []
         for i in range(1000):
-            tasks.append(tracker.add_bot(f"bot_{i:04d}", f"192.168.{i//255}.{i%255}"))
+            tasks.append(
+                tracker.add_bot(f"bot_{i:04d}", f"192.168.{i // 255}.{i % 255}")
+            )
 
         await asyncio.gather(*tasks)
         end_time = time.time()
@@ -182,15 +183,18 @@ class TestPerformanceComparison(unittest.TestCase):
         # Add bots to list
         start_time = time.time()
         for i in range(1000):
-            bot_info = {"id": f"bot_{i}", "ip": f"192.168.{i//255}.{i%255}"}
+            bot_info = {
+                "id": f"bot_{i}",
+                "ip": f"192.168.{i // 255}.{i % 255}",
+            }
             bot_list.append(bot_info)
-        list_add_time = time.time() - start_time
+        time.time() - start_time  # list_add_time
 
         # Search in list (O(n))
         start_time = time.time()
         for i in range(100):
-            target_id = f"bot_{i*5}"
-            found = any(bot["id"] == target_id for bot in bot_list)
+            target_id = f"bot_{i * 5}"
+            any(bot["id"] == target_id for bot in bot_list)  # found
         list_search_time = time.time() - start_time
 
         # Simulate dict-based tracking (new method)
@@ -200,14 +204,17 @@ class TestPerformanceComparison(unittest.TestCase):
         start_time = time.time()
         for i in range(1000):
             bot_id = f"bot_{i}"
-            bot_dict[bot_id] = {"id": bot_id, "ip": f"192.168.{i//255}.{i%255}"}
-        dict_add_time = time.time() - start_time
+            bot_dict[bot_id] = {
+                "id": bot_id,
+                "ip": f"192.168.{i // 255}.{i % 255}",
+            }
+        time.time() - start_time  # dict_add_time
 
         # Search in dict (O(1))
         start_time = time.time()
         for i in range(100):
-            target_id = f"bot_{i*5}"
-            found = target_id in bot_dict
+            target_id = f"bot_{i * 5}"
+            target_id in bot_dict  # found
         dict_search_time = time.time() - start_time
 
         # Dict should be much faster for lookups
@@ -255,7 +262,7 @@ class TestMemoryAndResourceManagement(unittest.TestCase):
 
         # Track initial state
         initial_connections = len(controller.active_connections)
-        initial_bots = controller.bot_tracker.get_bot_count()
+        controller.bot_tracker.get_bot_count()  # initial_bots
 
         # Simulate connections being added and removed
         # (This would typically happen in real async context)
@@ -285,7 +292,7 @@ class TestMemoryAndResourceManagement(unittest.TestCase):
 
         # Add many bots
         for i in range(1000):
-            asyncio.run(tracker.add_bot(f"bot_{i}", f"192.168.{i//255}.{i%255}"))
+            asyncio.run(tracker.add_bot(f"bot_{i}", f"192.168.{i // 255}.{i % 255}"))
 
         # Measure memory after adding bots
         gc.collect()
@@ -366,13 +373,14 @@ class TestStressConditions(unittest.IsolatedAsyncioTestCase):
 
         # Should handle concurrent encryption efficiently
         self.assertLess(
-            end_time - start_time, 3.0, "Concurrent encryption should be efficient"
+            end_time - start_time,
+            3.0,
+            "Concurrent encryption should be efficient",
         )
 
 
 if __name__ == "__main__":
     # Set up test environment
-    import sys
     import warnings
 
     # Suppress warnings for cleaner output

