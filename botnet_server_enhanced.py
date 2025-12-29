@@ -61,12 +61,13 @@ class EnhancedBotnetServer:
     Enhanced botnet server with modern security and performance features.
     """
 
-    def __init__(self, config_file: Optional[str] = None):
+    def __init__(self, config_file: Optional[str] = None, disable_dashboard: bool = False):
         """
         Initialize the enhanced botnet server.
 
         Args:
             config_file: Optional path to configuration file
+            disable_dashboard: Whether to disable web dashboard even if aiohttp is available
         """
         self.config = SecureConfig(config_file)
         self.logger = SecureLogger(
@@ -75,6 +76,7 @@ class EnhancedBotnetServer:
         self.encryption = SecureEncryption(self.config.get_encryption_key())
         self.validator = InputValidator()
         self.bot_tracker = BotTracker()
+        self.disable_dashboard = disable_dashboard
 
         self.host = self.config.get("SERVER_HOST", "0.0.0.0")
         self.port = self.config.get("SERVER_PORT", 9999)
@@ -105,8 +107,11 @@ class EnhancedBotnetServer:
 
     async def setup_web_server(self) -> None:
         """Setup the web dashboard server."""
-        if not AIOHTTP_AVAILABLE:
-            self.logger.warning("Web dashboard disabled: aiohttp not installed")
+        if not AIOHTTP_AVAILABLE or self.disable_dashboard:
+            if self.disable_dashboard:
+                self.logger.info("Web dashboard disabled by user")
+            else:
+                self.logger.warning("Web dashboard disabled: aiohttp not installed")
             return
         
         self.web_app = web.Application()
@@ -550,8 +555,8 @@ class EnhancedBotnetServer:
                 )
 
         try:
-            # Setup web server first (if available)
-            if AIOHTTP_AVAILABLE:
+            # Setup web server first (if available and not disabled)
+            if AIOHTTP_AVAILABLE and not self.disable_dashboard:
                 await self.setup_web_server()
                 
                 # Start web server
@@ -564,7 +569,10 @@ class EnhancedBotnetServer:
                         f"Web dashboard available at http://{self.host}:{self.web_port}"
                     )
             else:
-                self.logger.info("Web dashboard disabled (install aiohttp to enable)")
+                if self.disable_dashboard:
+                    self.logger.info("Web dashboard disabled by user")
+                else:
+                    self.logger.info("Web dashboard disabled (install aiohttp to enable)")
 
             # Start main server
             if self.ssl_context:
@@ -790,11 +798,11 @@ Environment Variables:
 
 async def main():
     """Main entry point for the enhanced botnet server."""
+    import os
+    
     args = parse_arguments()
     
     # Override environment variables with command-line arguments
-    import os
-    
     if args.host:
         os.environ['BOTNET_HOST'] = args.host
     
@@ -812,12 +820,11 @@ async def main():
     if args.max_connections:
         os.environ['BOTNET_MAX_CONNECTIONS'] = str(args.max_connections)
     
-    server = EnhancedBotnetServer(config_file=args.config)
-    
-    # Disable dashboard if requested
-    if args.no_dashboard:
-        global AIOHTTP_AVAILABLE
-        AIOHTTP_AVAILABLE = False
+    # Create server with dashboard disable flag
+    server = EnhancedBotnetServer(
+        config_file=args.config,
+        disable_dashboard=args.no_dashboard
+    )
     
     # Display startup information
     print("=" * 60)
@@ -825,15 +832,20 @@ async def main():
     print("Educational/Research Use Only")
     print("=" * 60)
     print(f"Main Server: {server.host}:{server.port}")
+    
+    dashboard_enabled = AIOHTTP_AVAILABLE and not args.no_dashboard
     print(f"Web Dashboard: {server.host}:{server.web_port} " + 
-          ("(Enabled)" if AIOHTTP_AVAILABLE and not args.no_dashboard else "(Disabled)"))
+          ("(Enabled)" if dashboard_enabled else "(Disabled)"))
+    
     print(f"Max Connections: {server.max_connections}")
     print(f"TLS: {'Enabled' if server.ssl_context else 'Disabled'}")
     print(f"Log Level: {server.config.get('LOG_LEVEL', 'INFO')}")
     print("=" * 60)
-    if AIOHTTP_AVAILABLE and not args.no_dashboard:
+    
+    if dashboard_enabled:
         print(f"Dashboard URL: http://{server.host}:{server.web_port}")
         print("=" * 60)
+    
     print("Press Ctrl+C to stop the server")
     print("=" * 60)
     

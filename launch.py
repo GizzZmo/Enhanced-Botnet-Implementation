@@ -227,7 +227,7 @@ def launch_server(mode, args):
     print(f"Command: {' '.join(cmd)}\n")
     
     try:
-        subprocess.run(cmd)
+        subprocess.run(cmd, shell=False)
         return True
     except KeyboardInterrupt:
         print("\nServer stopped by user")
