@@ -39,6 +39,40 @@ from utils import (
 )
 
 
+CYBER_EDITOR_LANGUAGES: List[Dict[str, Any]] = [
+    {"id": "javascript", "label": "JavaScript", "versions": ["ES2024", "ES2023", "ES2022"]},
+    {"id": "typescript", "label": "TypeScript", "versions": ["5.6", "5.5", "5.4"]},
+    {"id": "python", "label": "Python", "versions": ["3.12", "3.11", "3.10"]},
+    {"id": "go", "label": "Go", "versions": ["1.23", "1.22", "1.21"]},
+    {"id": "rust", "label": "Rust", "versions": ["1.82", "1.81", "1.80"]},
+    {"id": "java", "label": "Java", "versions": ["22", "21", "17"]},
+    {"id": "kotlin", "label": "Kotlin", "versions": ["2.0", "1.9", "1.8"]},
+    {"id": "swift", "label": "Swift", "versions": ["5.10", "5.9", "5.8"]},
+    {"id": "csharp", "label": "C#", "versions": ["12", "11", "10"]},
+    {"id": "cpp", "label": "C++", "versions": ["C++23", "C++20", "C++17"]},
+    {"id": "c", "label": "C", "versions": ["C18", "C11", "C99"]},
+    {"id": "php", "label": "PHP", "versions": ["8.3", "8.2", "8.1"]},
+    {"id": "ruby", "label": "Ruby", "versions": ["3.3", "3.2", "3.1"]},
+    {"id": "scala", "label": "Scala", "versions": ["3.4", "2.13", "2.12"]},
+    {"id": "elixir", "label": "Elixir", "versions": ["1.17", "1.16", "1.15"]},
+    {"id": "erlang", "label": "Erlang", "versions": ["27", "26", "25"]},
+    {"id": "haskell", "label": "Haskell", "versions": ["9.10", "9.8", "9.6"]},
+    {"id": "r", "label": "R", "versions": ["4.4", "4.3", "4.2"]},
+    {"id": "dart", "label": "Dart", "versions": ["3.4", "3.3", "3.2"]},
+    {"id": "lua", "label": "Lua", "versions": ["5.4", "5.3", "5.2"]},
+    {"id": "clojure", "label": "Clojure", "versions": ["1.12", "1.11", "1.10"]},
+    {"id": "perl", "label": "Perl", "versions": ["5.40", "5.38", "5.36"]},
+    {"id": "sql", "label": "SQL", "versions": ["PostgreSQL 17", "PostgreSQL 16", "MySQL 8.0"]},
+    {"id": "bash", "label": "Bash", "versions": ["5.2", "5.1", "5.0"]},
+    {"id": "powershell", "label": "PowerShell", "versions": ["7.4", "7.3", "7.2"]},
+    {"id": "html", "label": "HTML", "versions": ["HTML5"]},
+    {"id": "css", "label": "CSS", "versions": ["CSS4", "CSS3"]},
+    {"id": "json", "label": "JSON", "versions": ["1.0"]},
+    {"id": "yaml", "label": "YAML", "versions": ["1.3", "1.2", "1.1"]},
+    {"id": "markdown", "label": "Markdown", "versions": ["GFM"]},
+]
+
+
 class EnhancedBotnetServer:
     """
     Enhanced botnet server with modern security and performance features.
@@ -109,6 +143,7 @@ class EnhancedBotnetServer:
         self.web_app.router.add_get("/api/status", self.api_status)
         self.web_app.router.add_get("/api/bots", self.api_bots)
         self.web_app.router.add_get("/api/stats", self.api_stats)
+        self.web_app.router.add_get("/api/editor/languages", self.api_editor_languages)
 
         # Add CORS to all routes
         for route in list(self.web_app.router.routes()):
@@ -171,6 +206,14 @@ class EnhancedBotnetServer:
             return web.json_response(stats_data)
         except Exception as e:
             self.logger.error(f"Error in stats API: {str(e)}")
+            return web.json_response({"error": "Internal server error"}, status=500)
+
+    async def api_editor_languages(self, request: web.Request) -> web.Response:
+        """API endpoint exposing CyberEditor language support."""
+        try:
+            return web.json_response({"languages": CYBER_EDITOR_LANGUAGES})
+        except Exception as e:
+            self.logger.error(f"Error in editor languages API: {str(e)}")
             return web.json_response({"error": "Internal server error"}, status=500)
 
     async def handle_client_connection(

@@ -395,7 +395,7 @@
                 <span class="stat-value" id="threat-level">LOW</span>
             </div>
         </div>
-        
+
         <!-- Recent Commands Card -->
         <div class="card">
             <div class="card-title">📝 Command History</div>
@@ -404,6 +404,24 @@
                     No recent commands
                 </div>
             </div>
+        </div>
+
+        <!-- CyberEditor Card -->
+        <div class="card">
+            <div class="card-title">🧠 CyberEditor (AI Assisted)</div>
+            <div class="stat">
+                <span class="stat-label">Language:</span>
+                <select id="editor-language" style="background: #001100; color: #00ff00; border: 1px solid #004400; padding: 6px; border-radius: 6px; width: 100%;">
+                </select>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Supported Versions:</span>
+                <span class="stat-value" id="editor-language-versions">--</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <textarea id="cyber-editor" style="width: 100%; height: 160px; background: #000; color: #00ff00; border: 1px solid #004400; border-radius: 6px; padding: 10px; font-family: 'Share Tech Mono', monospace;" placeholder="Write code with AI assistance..."></textarea>
+            </div>
+            <small style="color: #666;">Languages synced with DocuHub (DevDocs) - latest stable + previous 2-3 versions.</small>
         </div>
     </div>
     
@@ -654,6 +672,78 @@
         
         // Initial fetch
         fetchServerData();
+
+        // CyberEditor language support (DocuHub/DevDocs aligned)
+        const fallbackEditorLanguages = [
+            { id: "javascript", label: "JavaScript", versions: ["ES2024", "ES2023", "ES2022"] },
+            { id: "typescript", label: "TypeScript", versions: ["5.6", "5.5", "5.4"] },
+            { id: "python", label: "Python", versions: ["3.12", "3.11", "3.10"] },
+            { id: "go", label: "Go", versions: ["1.23", "1.22", "1.21"] },
+            { id: "rust", label: "Rust", versions: ["1.82", "1.81", "1.80"] },
+            { id: "java", label: "Java", versions: ["22", "21", "17"] },
+            { id: "kotlin", label: "Kotlin", versions: ["2.0", "1.9", "1.8"] },
+            { id: "swift", label: "Swift", versions: ["5.10", "5.9", "5.8"] },
+            { id: "csharp", label: "C#", versions: ["12", "11", "10"] },
+            { id: "cpp", label: "C++", versions: ["C++23", "C++20", "C++17"] },
+            { id: "c", label: "C", versions: ["C18", "C11", "C99"] },
+            { id: "php", label: "PHP", versions: ["8.3", "8.2", "8.1"] },
+            { id: "ruby", label: "Ruby", versions: ["3.3", "3.2", "3.1"] },
+            { id: "scala", label: "Scala", versions: ["3.4", "2.13", "2.12"] },
+            { id: "elixir", label: "Elixir", versions: ["1.17", "1.16", "1.15"] },
+            { id: "erlang", label: "Erlang", versions: ["27", "26", "25"] },
+            { id: "haskell", label: "Haskell", versions: ["9.10", "9.8", "9.6"] },
+            { id: "r", label: "R", versions: ["4.4", "4.3", "4.2"] },
+            { id: "dart", label: "Dart", versions: ["3.4", "3.3", "3.2"] },
+            { id: "lua", label: "Lua", versions: ["5.4", "5.3", "5.2"] },
+            { id: "clojure", label: "Clojure", versions: ["1.12", "1.11", "1.10"] },
+            { id: "perl", label: "Perl", versions: ["5.40", "5.38", "5.36"] },
+            { id: "sql", label: "SQL", versions: ["PostgreSQL 17", "PostgreSQL 16", "MySQL 8.0"] },
+            { id: "bash", label: "Bash", versions: ["5.2", "5.1", "5.0"] },
+            { id: "powershell", label: "PowerShell", versions: ["7.4", "7.3", "7.2"] },
+            { id: "html", label: "HTML", versions: ["HTML5"] },
+            { id: "css", label: "CSS", versions: ["CSS4", "CSS3"] },
+            { id: "json", label: "JSON", versions: ["1.0"] },
+            { id: "yaml", label: "YAML", versions: ["1.3", "1.2", "1.1"] },
+            { id: "markdown", label: "Markdown", versions: ["GFM"] },
+        ];
+
+        function updateEditorVersionDisplay(langId, languages) {
+            const infoEl = document.getElementById('editor-language-versions');
+            const match = languages.find((l) => l.id === langId);
+            infoEl.textContent = match ? match.versions.join(', ') : '--';
+        }
+
+        function populateEditorLanguages(languages) {
+            const select = document.getElementById('editor-language');
+            select.innerHTML = '';
+            languages.forEach((lang) => {
+                const opt = document.createElement('option');
+                opt.value = lang.id;
+                opt.textContent = lang.label;
+                select.appendChild(opt);
+            });
+            if (languages.length > 0) {
+                select.value = languages[0].id;
+                updateEditorVersionDisplay(select.value, languages);
+            }
+            select.addEventListener('change', () => updateEditorVersionDisplay(select.value, languages));
+        }
+
+        async function loadEditorLanguages() {
+            try {
+                const response = await fetch('/api/editor/languages');
+                if (!response.ok) {
+                    throw new Error('Language endpoint unavailable');
+                }
+                const data = await response.json();
+                populateEditorLanguages(data.languages || fallbackEditorLanguages);
+            } catch (err) {
+                console.warn('Falling back to embedded language list', err);
+                populateEditorLanguages(fallbackEditorLanguages);
+            }
+        }
+
+        loadEditorLanguages();
     </script>
 </body>
 </html>
