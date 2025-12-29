@@ -269,6 +269,8 @@ class BotnetController:
         # Authenticate admin
         if not self._authenticate_admin():
             self.logger.error("Admin authentication required")
+            print("\n❌ Error: Admin authentication failed", file=sys.stderr)
+            print("Tip: Use --no-auth flag to skip authentication for testing", file=sys.stderr)
             return
 
         self.admin_authenticated = True
@@ -276,6 +278,9 @@ class BotnetController:
         # Validate configuration
         if not self.validator.validate_port(self.port):
             self.logger.error(f"Invalid port number: {self.port}")
+            print(f"\n❌ Error: Invalid port number: {self.port}", file=sys.stderr)
+            print("Tip: Port must be between 1 and 65535", file=sys.stderr)
+            print("     Use --port <number> to specify a different port", file=sys.stderr)
             return
 
         try:
@@ -307,8 +312,26 @@ class BotnetController:
                     monitor_task.cancel()
                     await self._shutdown_server()
 
+        except OSError as e:
+            if e.errno == 98 or e.errno == 48:  # Address already in use
+                self.logger.error(f"Port {self.port} is already in use")
+                print(f"\n❌ Error: Port {self.port} is already in use", file=sys.stderr)
+                print(f"Tip: Try a different port with: --port <number>", file=sys.stderr)
+                print(f"     Or find what's using the port:", file=sys.stderr)
+                print(f"       Linux/macOS: lsof -i :{self.port}", file=sys.stderr)
+                print(f"       Windows: netstat -ano | findstr :{self.port}", file=sys.stderr)
+            elif e.errno == 13:  # Permission denied
+                self.logger.error(f"Permission denied for port {self.port}")
+                print(f"\n❌ Error: Permission denied for port {self.port}", file=sys.stderr)
+                print(f"Tip: Ports below 1024 require root/admin privileges", file=sys.stderr)
+                print(f"     Use a port above 1024 (e.g., 9999) or run as root", file=sys.stderr)
+            else:
+                self.logger.error(f"Failed to start server: {str(e)}")
+                print(f"\n❌ Error: Failed to start server: {str(e)}", file=sys.stderr)
         except Exception as e:
             self.logger.error(f"Failed to start server: {str(e)}")
+            print(f"\n❌ Error: Failed to start server: {str(e)}", file=sys.stderr)
+            print(f"Tip: Run with --verbose flag for detailed error information", file=sys.stderr)
 
     async def _monitor_bots(self) -> None:
         """

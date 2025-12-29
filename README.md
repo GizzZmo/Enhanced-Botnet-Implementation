@@ -11,6 +11,35 @@
 
 ---
 
+## 🚀 Quick Start
+
+**Get started in 3 simple steps:**
+
+```bash
+# 1. Setup (automatic installation)
+./setup.sh          # Linux/macOS
+# OR
+setup.bat           # Windows
+
+# 2. Activate environment
+source venv/bin/activate
+
+# 3. Launch server (interactive mode)
+python launch.py
+```
+
+**Or use direct commands:**
+
+```bash
+python launch.py --basic              # Basic controller
+python launch.py --enhanced           # Enhanced server with dashboard
+python botnet_controller.py --help    # See all options
+```
+
+📖 **New to this project?** See [QUICKSTART.md](QUICKSTART.md) for a comprehensive getting started guide.
+
+---
+
 ## 🎯 Table of Contents
 
 - [Purpose & Overview](#-purpose--overview)
@@ -214,16 +243,24 @@ async def _cleanup_connection(self, bot_id: str, writer) -> None:
 ```
 Enhanced-Botnet-Implementation/
 ├── 📄 README.md                    # This comprehensive documentation
+├── 📄 QUICKSTART.md                # Quick start guide for new users
 ├── 📄 CONTRIBUTING.md              # Contribution guidelines
+├── 📄 DASHBOARD.md                 # Web dashboard documentation
 ├── 📄 LICENSE                      # Educational use license
 ├── 📄 requirements.txt             # Python dependencies (pinned versions)
 ├── 📄 .gitignore                   # Git ignore patterns
+├── 📄 .env.example                 # Example environment configuration
+├── 📄 config.example.json          # Example JSON configuration
 ├── 📄 .github/workflows/ci.yml     # Enhanced CI/CD pipeline
 │
+├── 🐍 launch.py                    # Quick start launcher (recommended)
+├── 🐍 setup.sh                     # Automated setup for Linux/macOS
+├── 🐍 setup.bat                    # Automated setup for Windows
 ├── 🐍 utils.py                     # Shared utilities module
 ├── 🐍 botnet_controller.py         # Main async C&C controller
 ├── 🐍 botnet_server_enhanced.py    # Enhanced server implementation
 ├── 🐍 test_basic.py                # Basic compatibility tests
+├── 🌐 dashboard.html               # Cyberpunk web dashboard
 │
 ├── 📁 tests/                       # Comprehensive test suite
 │   ├── 🧪 test_botnet_controller.py # Controller tests (async)
@@ -238,16 +275,35 @@ Enhanced-Botnet-Implementation/
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Installation & Setup
 
-### Prerequisites
+### Quick Installation (Recommended)
 
-- **Python 3.8+** (3.11+ recommended for best performance)
-- **pip** package manager
-- **Git** for version control
-- **Isolated network** for testing (required for ethical use)
+The fastest way to get started:
 
-### Installation
+**Linux/macOS:**
+```bash
+./setup.sh
+source venv/bin/activate
+python launch.py
+```
+
+**Windows:**
+```cmd
+setup.bat
+venv\Scripts\activate.bat
+python launch.py
+```
+
+The setup script will:
+- Create a virtual environment
+- Install all dependencies
+- Generate encryption keys
+- Create configuration files
+
+### Manual Installation
+
+If you prefer manual setup:
 
 1. **Clone the repository**:
    ```bash
@@ -257,7 +313,7 @@ Enhanced-Botnet-Implementation/
 
 2. **Create virtual environment**:
    ```bash
-   python -m venv venv
+   python3 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
@@ -268,60 +324,147 @@ Enhanced-Botnet-Implementation/
 
 4. **Verify installation**:
    ```bash
-   python -c "import utils; print('✅ Installation successful')"
+   python launch.py --check-deps
    ```
 
-### Basic Usage
+---
 
-1. **Set up configuration** (optional):
-   ```bash
-   export BOTNET_HOST="127.0.0.1"
-   export BOTNET_PORT="9999"
-   export BOTNET_LOG_LEVEL="INFO"
-   export BOTNET_ADMIN_PASSWORD="your_secure_password"
-   ```
+## 🎮 Usage
 
-2. **Run the enhanced controller**:
-   ```bash
-   python botnet_controller.py
-   ```
+### Interactive Launcher (Easiest)
 
-3. **Run the enhanced server** (alternative):
-   ```bash
-   python botnet_server_enhanced.py
-   ```
+The launcher provides an interactive menu and handles all configuration:
+
+```bash
+python launch.py
+```
+
+Choose between:
+1. **Basic Controller** - Simple C&C server
+2. **Enhanced Server** - Full-featured server with web dashboard
+
+### Command-Line Usage
+
+**Basic Controller:**
+```bash
+# Default settings
+python botnet_controller.py
+
+# Custom configuration
+python botnet_controller.py --host 127.0.0.1 --port 8888 --verbose
+
+# Skip authentication (for testing)
+python botnet_controller.py --no-auth
+
+# Show all options
+python botnet_controller.py --help
+```
+
+**Enhanced Server:**
+```bash
+# Default settings with dashboard
+python botnet_server_enhanced.py
+
+# Custom ports
+python botnet_server_enhanced.py --port 9999 --web-port 8080
+
+# Without dashboard
+python botnet_server_enhanced.py --no-dashboard
+
+# Show all options
+python botnet_server_enhanced.py --help
+```
+
+### Quick Start Examples
+
+**Local testing (most secure):**
+```bash
+python launch.py --basic --host 127.0.0.1 --no-auth
+```
+
+**Network lab with dashboard:**
+```bash
+python launch.py --enhanced --host 0.0.0.0
+# Open browser to: http://your-server-ip:8080
+```
+
+**Debug mode:**
+```bash
+python botnet_controller.py --verbose
+```
 
 ---
 
 ## ⚙️ Configuration
 
+### Configuration Priority
+
+Settings are loaded in this order (later overrides earlier):
+1. Default values
+2. Configuration file (if specified)
+3. Environment variables
+4. Command-line arguments
+
 ### Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `BOTNET_HOST` | `0.0.0.0` | Server bind address |
-| `BOTNET_PORT` | `9999` | Server port number |
-| `BOTNET_ENCRYPTION_KEY` | *Generated* | Base64-encoded 32-byte key |
-| `BOTNET_ADMIN_PASSWORD` | *None* | Admin authentication password |
-| `BOTNET_TLS_CERT` | *None* | Path to TLS certificate |
-| `BOTNET_TLS_KEY` | *None* | Path to TLS private key |
-| `BOTNET_LOG_LEVEL` | `INFO` | Logging level |
-| `BOTNET_MAX_CONNECTIONS` | `100` | Maximum concurrent connections |
+Create a `.env` file or export variables:
+
+```bash
+# Copy example file
+cp .env.example .env
+
+# Edit with your settings
+nano .env
+```
+
+Example `.env`:
+```bash
+BOTNET_HOST=127.0.0.1
+BOTNET_PORT=9999
+BOTNET_WEB_PORT=8080
+BOTNET_LOG_LEVEL=INFO
+BOTNET_MAX_CONNECTIONS=100
+```
 
 ### Configuration File
 
-Create `config.json` for non-sensitive settings:
+Create a `config.json` file:
 
 ```json
 {
   "SERVER_HOST": "127.0.0.1",
-  "SERVER_PORT": 8080,
-  "LOG_LEVEL": "DEBUG",
-  "MAX_CONNECTIONS": 200
+  "SERVER_PORT": 9999,
+  "WEB_PORT": 8080,
+  "LOG_LEVEL": "INFO",
+  "MAX_CONNECTIONS": 100
 }
 ```
 
-### Security Configuration
+Use it:
+```bash
+python botnet_controller.py --config config.json
+```
+
+### Command-Line Options
+
+| Option | Description | Example |
+|--------|-------------|---------|
+| `--host` | Server bind address | `--host 127.0.0.1` |
+| `--port` | Server port | `--port 9999` |
+| `--web-port` | Dashboard port (enhanced only) | `--web-port 8080` |
+| `--config` | Config file path | `--config my-config.json` |
+| `--no-auth` | Skip authentication | `--no-auth` |
+| `--verbose`, `-v` | Debug logging | `--verbose` |
+| `--quiet`, `-q` | Minimal output | `--quiet` |
+| `--max-connections` | Connection limit | `--max-connections 200` |
+| `--version` | Show version | `--version` |
+| `--help`, `-h` | Show help | `--help` |
+
+---
+
+## 🎯 Features Overview
+
+### Basic Controller Features
 
 ```bash
 # Generate secure encryption key
