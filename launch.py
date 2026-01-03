@@ -40,9 +40,9 @@ def install_dependencies():
     """Install required dependencies."""
     print("Installing required dependencies...")
     try:
-        subprocess.check_call([
-            sys.executable, "-m", "pip", "install", "-r", "requirements.txt"
-        ])
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
+        )
         print("✓ Dependencies installed successfully!")
         return True
     except subprocess.CalledProcessError:
@@ -77,69 +77,57 @@ Features:
     - Real-time monitoring
     - Performance metrics
     - Command history
-        """
+        """,
     )
 
     parser.add_argument(
-        '--version',
-        action='version',
-        version='Enhanced Botnet Implementation Launcher v2.0'
+        "--version",
+        action="version",
+        version="Enhanced Botnet Implementation Launcher v2.0",
     )
 
     mode_group = parser.add_mutually_exclusive_group()
     mode_group.add_argument(
-        '--basic',
-        action='store_true',
-        help='Launch basic controller (botnet_controller.py)'
+        "--basic",
+        action="store_true",
+        help="Launch basic controller (botnet_controller.py)",
     )
 
     mode_group.add_argument(
-        '--enhanced',
-        action='store_true',
-        help='Launch enhanced server with dashboard (botnet_server_enhanced.py)'
+        "--enhanced",
+        action="store_true",
+        help="Launch enhanced server with dashboard (botnet_server_enhanced.py)",
     )
 
     parser.add_argument(
-        '--host',
+        "--host",
         type=str,
-        default='127.0.0.1',
-        help='Server bind address (default: 127.0.0.1 for security)'
+        default="127.0.0.1",
+        help="Server bind address (default: 127.0.0.1 for security)",
     )
 
+    parser.add_argument("--port", type=int, help="Server port number (default: 9999)")
+
     parser.add_argument(
-        '--port',
+        "--web-port",
         type=int,
-        help='Server port number (default: 9999)'
+        help="Web dashboard port (default: 8080, enhanced mode only)",
     )
 
     parser.add_argument(
-        '--web-port',
-        type=int,
-        help='Web dashboard port (default: 8080, enhanced mode only)'
+        "--no-auth", action="store_true", help="Skip admin authentication"
     )
 
     parser.add_argument(
-        '--no-auth',
-        action='store_true',
-        help='Skip admin authentication'
+        "--verbose", "-v", action="store_true", help="Enable verbose logging"
     )
 
     parser.add_argument(
-        '--verbose', '-v',
-        action='store_true',
-        help='Enable verbose logging'
+        "--check-deps", action="store_true", help="Check if dependencies are installed"
     )
 
     parser.add_argument(
-        '--check-deps',
-        action='store_true',
-        help='Check if dependencies are installed'
-    )
-
-    parser.add_argument(
-        '--install-deps',
-        action='store_true',
-        help='Install missing dependencies'
+        "--install-deps", action="store_true", help="Install missing dependencies"
     )
 
     return parser.parse_args()
@@ -157,13 +145,17 @@ def interactive_mode():
     has_optional = check_optional_dependencies()
 
     print("\nDependency Check:")
-    print(f"  Required (cryptography): {'✓ Installed' if has_required else '✗ Missing'}")
-    print(f"  Optional (aiohttp):      {'✓ Installed' if has_optional else '✗ Missing'}")
+    print(
+        f"  Required (cryptography): {'✓ Installed' if has_required else '✗ Missing'}"
+    )
+    print(
+        f"  Optional (aiohttp):      {'✓ Installed' if has_optional else '✗ Missing'}"
+    )
 
     if not has_required:
         print("\n⚠ Required dependencies missing!")
         response = input("\nInstall dependencies now? (y/n): ").strip().lower()
-        if response == 'y':
+        if response == "y":
             if install_dependencies():
                 has_required = True
                 has_optional = check_optional_dependencies()
@@ -187,17 +179,17 @@ def interactive_mode():
 
     while True:
         choice = input("\nEnter choice (1 or 2): ").strip()
-        if choice == '1':
-            return 'basic'
-        elif choice == '2':
-            return 'enhanced'
+        if choice == "1":
+            return "basic"
+        elif choice == "2":
+            return "enhanced"
         else:
             print("Invalid choice. Please enter 1 or 2.")
 
 
 def launch_server(mode, args):
     """Launch the selected server."""
-    script = 'botnet_controller.py' if mode == 'basic' else 'botnet_server_enhanced.py'
+    script = "botnet_controller.py" if mode == "basic" else "botnet_server_enhanced.py"
     script_path = Path(__file__).parent / script
 
     if not script_path.exists():
@@ -208,19 +200,19 @@ def launch_server(mode, args):
     cmd = [sys.executable, str(script_path)]
 
     if args.host:
-        cmd.extend(['--host', args.host])
+        cmd.extend(["--host", args.host])
 
     if args.port:
-        cmd.extend(['--port', str(args.port)])
+        cmd.extend(["--port", str(args.port)])
 
-    if args.web_port and mode == 'enhanced':
-        cmd.extend(['--web-port', str(args.web_port)])
+    if args.web_port and mode == "enhanced":
+        cmd.extend(["--web-port", str(args.web_port)])
 
     if args.no_auth:
-        cmd.append('--no-auth')
+        cmd.append("--no-auth")
 
     if args.verbose:
-        cmd.append('--verbose')
+        cmd.append("--verbose")
 
     print(f"\nLaunching {mode} server...")
     print(f"Command: {' '.join(cmd)}\n")
@@ -245,8 +237,12 @@ def main():
         has_required = check_dependencies()
         has_optional = check_optional_dependencies()
         print("\nDependency Check:")
-        print(f"  Required (cryptography): {'✓ Installed' if has_required else '✗ Missing'}")
-        print(f"  Optional (aiohttp):      {'✓ Installed' if has_optional else '✗ Missing'}")
+        print(
+            f"  Required (cryptography): {'✓ Installed' if has_required else '✗ Missing'}"
+        )
+        print(
+            f"  Optional (aiohttp):      {'✓ Installed' if has_optional else '✗ Missing'}"
+        )
         return 0 if has_required else 1
 
     if args.install_deps:
@@ -254,9 +250,9 @@ def main():
 
     # Determine mode
     if args.basic:
-        mode = 'basic'
+        mode = "basic"
     elif args.enhanced:
-        mode = 'enhanced'
+        mode = "enhanced"
     else:
         mode = interactive_mode()
         if mode is None:
@@ -267,5 +263,5 @@ def main():
     return 0 if success else 1
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

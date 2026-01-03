@@ -10,7 +10,9 @@ def ensure_event_loop():
     with warnings.catch_warnings():
         # Suppress only the deprecation warning triggered when no loop is set.
         warnings.filterwarnings(
-            "ignore", category=DeprecationWarning, message="There is no current event loop"
+            "ignore",
+            category=DeprecationWarning,
+            message="There is no current event loop",
         )
         try:
             original_loop = asyncio.get_event_loop()
@@ -29,6 +31,8 @@ def ensure_event_loop():
     if created_new:
         loop.close()
         restore_loop = (
-            original_loop if original_loop is not None and not original_loop.is_closed() else None
+            original_loop
+            if original_loop is not None and not original_loop.is_closed()
+            else None
         )
         asyncio.set_event_loop(restore_loop)
