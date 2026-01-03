@@ -6,12 +6,20 @@ This test validates that the BotTracker properly handles concurrent access
 from multiple threads while also supporting async operations.
 """
 
-import unittest
 import asyncio
+import unittest
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from utils import BotTracker
+
+
+def ensure_event_loop():
+    """Ensure an event loop exists for tests running in the main thread."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        asyncio.set_event_loop(asyncio.new_event_loop())
 
 
 class TestBotTrackerThreadSafety(unittest.TestCase):
@@ -19,6 +27,7 @@ class TestBotTrackerThreadSafety(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures."""
+        ensure_event_loop()
         self.tracker = BotTracker()
 
     def test_threading_lock_attributes(self):

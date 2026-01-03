@@ -414,11 +414,6 @@ class BotTracker:
         self.connection_history: List[Dict[str, Any]] = []
 
         # Use both asyncio.Lock and threading.Lock for comprehensive protection
-        if asyncio is not None:
-            try:
-                asyncio.get_running_loop()
-            except RuntimeError:
-                asyncio.set_event_loop(asyncio.new_event_loop())
         self._async_lock = asyncio.Lock()
         self._thread_lock = threading.RLock()  # RLock allows recursive acquisition
 
