@@ -13,17 +13,10 @@ import gc
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from conftest import ensure_loop
 from utils import SecureEncryption, BotTracker, SecureLogger
 import botnet_controller
 import botnet_server_enhanced
-
-
-def ensure_event_loop():
-    """Ensure an event loop exists for tests running in the main thread."""
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        asyncio.set_event_loop(asyncio.new_event_loop())
 
 
 class TestPerformanceBasics(unittest.TestCase):
@@ -266,7 +259,7 @@ class TestMemoryAndResourceManagement(unittest.TestCase):
 
     def test_connection_cleanup(self):
         """Test that connections are properly cleaned up."""
-        ensure_event_loop()
+        ensure_loop()
         controller = botnet_controller.BotnetController()
 
         # Track initial state
@@ -293,7 +286,7 @@ class TestMemoryAndResourceManagement(unittest.TestCase):
 
     def test_memory_efficient_bot_tracking(self):
         """Test memory efficiency of bot tracking."""
-        ensure_event_loop()
+        ensure_loop()
         tracker = BotTracker()
 
         # Force garbage collection

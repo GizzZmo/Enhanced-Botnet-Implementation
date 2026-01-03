@@ -1,4 +1,5 @@
 import asyncio
+import threading
 import warnings
 
 import pytest
@@ -36,3 +37,19 @@ def ensure_event_loop():
             else None
         )
         asyncio.set_event_loop(restore_loop)
+
+
+def ensure_loop():
+    """
+    Ensure an event loop exists for the current thread.
+
+    This helper is intended for synchronous tests that instantiate asyncio
+    primitives outside of an async context.
+    """
+    if threading.current_thread() is not threading.main_thread():
+        return
+    policy = asyncio.get_event_loop_policy()
+    try:
+        policy.get_event_loop()
+    except RuntimeError:
+        policy.set_event_loop(policy.new_event_loop())
