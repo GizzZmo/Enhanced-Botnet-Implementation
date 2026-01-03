@@ -337,7 +337,6 @@ class TestStressConditions(unittest.IsolatedAsyncioTestCase):
 
     async def test_high_concurrency_bot_operations(self):
         """Test high concurrency scenarios."""
-        ensure_event_loop()
         tracker = BotTracker()
 
         # Create many concurrent operations
