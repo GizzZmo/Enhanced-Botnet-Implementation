@@ -11,6 +11,9 @@ def ensure_loop():
 
     This helper is intended for synchronous tests that instantiate asyncio
     primitives outside of an async context.
+
+    Note: Only the main thread is managed here; worker threads are expected
+    to create and manage their own event loops if needed.
     """
     if threading.current_thread() is not threading.main_thread():
         return
@@ -38,7 +41,7 @@ def ensure_event_loop():
 
     ensure_loop()
     loop = asyncio.get_event_loop()
-    created_new = original_loop is None or (original_loop and original_loop.is_closed())
+    created_new = original_loop is None or original_loop.is_closed()
 
     yield
 
