@@ -1,0 +1,31 @@
+name: Assets & Artifacts
+
+on:
+  push:
+    branches: [main, develop, feature/**]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Prepare assets bundle
+        run: |
+          mkdir -p dist/assets
+          cp README.md QUICKSTART.md DASHBOARD.md LICENSE dist/assets/
+          cp dashboard.html config.example.json requirements.txt dist/assets/
+          tar -czf dist/assets-bundle.tar.gz -C dist assets
+
+      - name: Upload assets bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: project-assets
+          path: dist/assets-bundle.tar.gz
