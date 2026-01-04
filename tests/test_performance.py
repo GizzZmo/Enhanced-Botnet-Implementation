@@ -6,13 +6,14 @@ These tests validate performance characteristics and ensure the enhancements
 provide better scalability and resource efficiency.
 """
 
-import unittest
 import asyncio
+import unittest
 import time
 import gc
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch
 
+from conftest import ensure_loop
 from utils import SecureEncryption, BotTracker, SecureLogger
 import botnet_controller
 import botnet_server_enhanced
@@ -258,6 +259,7 @@ class TestMemoryAndResourceManagement(unittest.TestCase):
 
     def test_connection_cleanup(self):
         """Test that connections are properly cleaned up."""
+        ensure_loop()
         controller = botnet_controller.BotnetController()
 
         # Track initial state
@@ -284,6 +286,7 @@ class TestMemoryAndResourceManagement(unittest.TestCase):
 
     def test_memory_efficient_bot_tracking(self):
         """Test memory efficiency of bot tracking."""
+        ensure_loop()
         tracker = BotTracker()
 
         # Force garbage collection
