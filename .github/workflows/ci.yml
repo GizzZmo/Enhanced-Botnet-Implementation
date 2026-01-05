@@ -255,7 +255,7 @@ jobs:
             echo "❌ .gitignore missing"
             exit 1
           fi
-            echo "✅ .gitignore present"
+          echo "✅ .gitignore present"
 
       - name: Check docstring coverage
         run: |
@@ -267,6 +267,13 @@ jobs:
             echo "Docstring badge not generated"
             exit 1
           fi
+
+      - name: Upload docstring badge
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docstring-badge
+          path: docs/docstring.svg
     
   final-validation:
     runs-on: ubuntu-latest
