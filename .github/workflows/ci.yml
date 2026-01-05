@@ -253,11 +253,11 @@ jobs:
           fi
           echo "✅ .gitignore present"
 
-        - name: Check docstring coverage
-    run: |
-      python -m pip install --upgrade pip
-      pip install pytest-cov
-      pytest-cov . --badge=docs --skip-file-doc
+      - name: Check docstring coverage
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest-cov
+          pytest-cov . --badge=docs --skip-file-doc
     
   final-validation:
     runs-on: ubuntu-latest
