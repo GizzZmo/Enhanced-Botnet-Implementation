@@ -221,6 +221,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
         
       - name: Check documentation completeness
         run: |
@@ -250,13 +255,13 @@ jobs:
             echo "❌ .gitignore missing"
             exit 1
           fi
-          echo "✅ .gitignore present"
+            echo "✅ .gitignore present"
 
       - name: Check docstring coverage
         run: |
           python -m pip install --upgrade pip
-          pip install pytest-cov
-          pytest-cov . --badge=docs --skip-file-doc
+          pip install interrogate
+          interrogate -v .
     
   final-validation:
     runs-on: ubuntu-latest
