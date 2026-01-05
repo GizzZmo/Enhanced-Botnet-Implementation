@@ -263,6 +263,10 @@ jobs:
           pip install interrogate
           mkdir -p docs
           interrogate -v --generate-badge docs/docstring.svg .
+          if [ ! -f docs/docstring.svg ]; then
+            echo "Docstring badge not generated"
+            exit 1
+          fi
     
   final-validation:
     runs-on: ubuntu-latest
