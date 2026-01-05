@@ -22,9 +22,8 @@ jobs:
           source venv/bin/activate
           pip install --upgrade pip
           pip install pytest pytest-asyncio pytest-cov flake8 black bandit safety mypy
-
-      - name: Install black
-        run: pip install black
+          echo "VIRTUAL_ENV=$PWD/venv" >> $GITHUB_ENV
+          echo "PATH=$PWD/venv/bin:$PATH" >> $GITHUB_ENV
 
       - name: Code formatting check (Black)
         run: |
