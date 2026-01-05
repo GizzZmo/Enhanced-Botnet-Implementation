@@ -260,9 +260,9 @@ jobs:
       - name: Check docstring coverage
         run: |
           python -m pip install --upgrade pip
-          pip install interrogate==1.7.0
+          pip install -r requirements.txt
           mkdir -p docs
-          interrogate -v --generate-badge docs/docstring.svg .
+          interrogate -v --exclude tests/ --fail-under=80 --generate-badge docs/docstring.svg .
           if [ ! -f docs/docstring.svg ]; then
             echo "Docstring badge not generated"
             exit 1
