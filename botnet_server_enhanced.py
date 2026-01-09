@@ -28,8 +28,8 @@ from typing import Optional, Dict, Any, List, TYPE_CHECKING
 
 try:
     from typing import TypeAlias
-except ImportError:  # Python <3.10 compatibility
-    TypeAlias = object
+except ImportError:  # Python <3.10
+    from typing_extensions import TypeAlias  # type: ignore
 from pathlib import Path
 
 # Make aiohttp optional for basic functionality
