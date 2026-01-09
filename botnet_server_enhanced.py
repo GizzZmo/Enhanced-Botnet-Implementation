@@ -444,7 +444,7 @@ class EnhancedBotnetServer:
             reader: Stream reader
             writer: Stream writer
         """
-        command_queue = asyncio.Queue[str]()
+        command_queue: asyncio.Queue[str] = asyncio.Queue()
 
         # Start command generation task (simulated for demo)
         command_task = asyncio.create_task(
