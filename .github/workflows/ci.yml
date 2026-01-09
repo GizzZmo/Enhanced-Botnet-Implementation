@@ -41,8 +41,8 @@ jobs:
 
       - name: Security scanning (Bandit)
         run: |
-          bandit -r . --exclude venv -f json -o bandit-report.json || true
-          bandit -r . --exclude venv --severity-level medium --confidence-level medium
+          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache -f json -o bandit-report.json || true
+          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --severity-level medium --confidence-level medium
 
       - name: Dependency security check (Safety)
         run: |
