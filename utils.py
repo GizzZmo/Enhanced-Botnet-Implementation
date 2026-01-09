@@ -314,7 +314,9 @@ class SecureLogger:
     Secure logging utilities that prevent information leakage.
     """
 
-    def __init__(self, name: str, level: str = "INFO", log_file: Optional[str] = None) -> None:
+    def __init__(
+        self, name: str, level: str = "INFO", log_file: Optional[str] = None
+    ) -> None:
         """
         Initialize secure logger.
 

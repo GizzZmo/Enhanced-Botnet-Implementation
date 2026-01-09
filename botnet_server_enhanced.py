@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+
 """
 
 Enhanced Botnet Command & Control Server (Educational/Research Use Only)
