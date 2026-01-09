@@ -14,11 +14,7 @@ import logging
 import hashlib
 import datetime
 import threading
-
-try:
-    import asyncio
-except ImportError:
-    asyncio = None
+import asyncio
 import ssl
 import json
 import re
@@ -38,7 +34,7 @@ class SecureConfig:
     Secure configuration management using environment variables and config files.
     """
 
-    def __init__(self, config_file: Optional[str] = None):
+    def __init__(self, config_file: Optional[str] = None) -> None:
         """
         Initialize secure configuration.
 
@@ -121,7 +117,7 @@ class SecureEncryption:
     Secure AES encryption utilities with proper key management.
     """
 
-    def __init__(self, key: Optional[bytes] = None):
+    def __init__(self, key: Optional[bytes] = None) -> None:
         """
         Initialize encryption with provided key or generate new one.
 
@@ -318,7 +314,9 @@ class SecureLogger:
     Secure logging utilities that prevent information leakage.
     """
 
-    def __init__(self, name: str, level: str = "INFO", log_file: Optional[str] = None):
+    def __init__(
+        self, name: str, level: str = "INFO", log_file: Optional[str] = None
+    ) -> None:
         """
         Initialize secure logger.
 
@@ -408,7 +406,7 @@ class BotTracker:
     - Supports concurrent access from multiple event loops in different threads
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize bot tracker with proper synchronization."""
         self.active_bots: Dict[str, Dict[str, Any]] = {}
         self.connection_history: List[Dict[str, Any]] = []
