@@ -24,7 +24,12 @@ import datetime
 import signal
 import sys
 import argparse
-from typing import Optional, Dict, Any, List, TYPE_CHECKING, TypeAlias
+from typing import Optional, Dict, Any, List, TYPE_CHECKING
+
+try:
+    from typing import TypeAlias
+except ImportError:  # Python <3.10 compatibility
+    TypeAlias = object
 from pathlib import Path
 
 # Make aiohttp optional for basic functionality
