@@ -260,9 +260,9 @@ class EnhancedBotnetServer:
             return web.json_response({"error": "Internal server error"}, status=500)
 
     async def api_editor_languages(self, request: WebRequest) -> WebResponse:
+        """API endpoint exposing CyberEditor language support."""
         if not AIOHTTP_AVAILABLE:
             raise RuntimeError("aiohttp not available")
-        """API endpoint exposing CyberEditor language support."""
         try:
             return web.json_response({"languages": CYBER_EDITOR_LANGUAGES})
         except Exception as e:
@@ -444,7 +444,7 @@ class EnhancedBotnetServer:
             reader: Stream reader
             writer: Stream writer
         """
-        command_queue: asyncio.Queue[str] = asyncio.Queue()
+        command_queue = asyncio.Queue[str]()
 
         # Start command generation task (simulated for demo)
         command_task = asyncio.create_task(
