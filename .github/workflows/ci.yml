@@ -41,8 +41,8 @@ jobs:
 
       - name: Security scanning (Bandit)
         run: |
-          bandit -r . --exclude venv,.venv,**/venv,**/.venv,**/site-packages,**/dist-packages,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-report.json || true
-          bandit -r . --exclude venv,.venv,**/venv,**/.venv,**/site-packages,**/dist-packages,.git,__pycache__,.pytest_cache --skip B108 --severity-level medium --confidence-level medium
+          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-report.json || true
+          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 --severity-level medium --confidence-level medium
 
       - name: Dependency security check (Safety)
         run: |
@@ -168,8 +168,8 @@ jobs:
 
       - name: Advanced security scan (Bandit)
         run: |
-          bandit -r . --exclude venv,.venv,**/venv,**/.venv,**/site-packages,**/dist-packages,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-detailed.json
-          bandit -r . --exclude venv,.venv,**/venv,**/.venv,**/site-packages,**/dist-packages,.git,__pycache__,.pytest_cache --skip B108 --severity-level low --confidence-level low -f txt
+          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-detailed.json
+          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 --severity-level low --confidence-level low -f txt
 
       - name: Semgrep security scan
         run: |
