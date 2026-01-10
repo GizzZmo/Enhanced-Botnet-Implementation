@@ -386,7 +386,7 @@ python launch.py --basic --host 127.0.0.1 --no-auth
 
 **Network lab with dashboard:**
 ```bash
-python launch.py --enhanced --host 0.0.0.0
+python launch.py --enhanced --host 127.0.0.1
 # Open browser to: http://your-server-ip:8080
 ```
 

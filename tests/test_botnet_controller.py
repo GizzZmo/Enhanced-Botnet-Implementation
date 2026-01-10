@@ -26,7 +26,7 @@ class TestBotnetController(unittest.TestCase):
         self.assertIsNotNone(controller.config)
         self.assertIsNotNone(controller.encryption)
         self.assertIsNotNone(controller.bot_tracker)
-        self.assertEqual(controller.host, "0.0.0.0")
+        self.assertEqual(controller.host, "127.0.0.1")
         self.assertEqual(controller.port, 9999)
 
     def test_legacy_compatibility(self):

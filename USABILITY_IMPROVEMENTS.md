@@ -152,7 +152,7 @@ Priority: Defaults → Config File → Environment → CLI Arguments
 Before:
 ```
 INFO:BotnetController:BotnetController initialized
-INFO:BotnetController:Server listening on 0.0.0.0:9999
+INFO:BotnetController:Server listening on 127.0.0.1:9999
 ```
 
 After:

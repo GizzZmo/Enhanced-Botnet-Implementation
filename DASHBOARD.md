@@ -46,8 +46,8 @@ export BOTNET_WEB_PORT=8080
 # Main server port (default: 9999)  
 export BOTNET_PORT=9999
 
-# Server host (default: 0.0.0.0)
-export BOTNET_HOST=0.0.0.0
+# Server host (default: 127.0.0.1)
+export BOTNET_HOST=127.0.0.1
 
 # Maximum message size (default: 1MB)
 export BOTNET_MAX_MESSAGE_SIZE=1048576

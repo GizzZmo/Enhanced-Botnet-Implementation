@@ -21,7 +21,6 @@ semgrep
 
 # Documentation coverage
 pydocstyle
-interrogate==1.7.0
 typing_extensions
 
 # Testing tools

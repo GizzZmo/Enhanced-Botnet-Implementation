@@ -158,7 +158,7 @@ python launch.py --basic --host 127.0.0.1 --no-auth
 ### 2. Network Lab Testing
 
 ```bash
-python launch.py --enhanced --host 0.0.0.0 --port 9999
+python launch.py --enhanced --host 127.0.0.1 --port 9999
 ```
 
 Then access dashboard at: `http://your-server-ip:8080`
