@@ -27,12 +27,12 @@ jobs:
 
       - name: Code formatting check (Black)
         run: |
-          black --check --diff .
+          black --check --diff --extend-exclude "(^|/)(\\.venv|venv|env|ENV|\\.env)" .
 
       - name: Linting (Flake8)
         run: |
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,.git,__pycache__,.pytest_cache
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=venv,.git,__pycache__,.pytest_cache
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,.venv,env,.env,.git,__pycache__,.pytest_cache
+          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics --exclude=venv,.venv,env,.env,.git,__pycache__,.pytest_cache
 
       - name: Type checking (MyPy)
         run: |
@@ -41,8 +41,8 @@ jobs:
 
       - name: Security scanning (Bandit)
         run: |
-          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-report.json || true
-          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 --severity-level medium --confidence-level medium
+          bandit -r . --exclude venv,.venv,env,.env,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-report.json || true
+          bandit -r . --exclude venv,.venv,env,.env,.git,__pycache__,.pytest_cache --skip B108 --severity-level medium --confidence-level medium
 
       - name: Dependency security check (Safety)
         run: |
@@ -168,21 +168,21 @@ jobs:
 
       - name: Advanced security scan (Bandit)
         run: |
-          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-detailed.json
-          bandit -r . --exclude venv,.git,__pycache__,.pytest_cache --skip B108 --severity-level low --confidence-level low -f txt
+          bandit -r . --exclude venv,.venv,env,.env,.git,__pycache__,.pytest_cache --skip B108 -f json -o bandit-detailed.json
+          bandit -r . --exclude venv,.venv,env,.env,.git,__pycache__,.pytest_cache --skip B108 --severity-level low --confidence-level low -f txt
 
       - name: Semgrep security scan
         run: |
-          semgrep --config=auto . --json --output=semgrep-report.json || true
-          semgrep --config=auto . --severity=ERROR
+          semgrep --config=auto . --exclude-dir env --exclude-dir venv --exclude-dir .venv --json --output=semgrep-report.json || true
+          semgrep --config=auto . --exclude-dir env --exclude-dir venv --exclude-dir .venv --severity=ERROR
 
       - name: Check for hardcoded secrets
         run: |
-          grep -r -n -i "password\|secret\|key\|token" --exclude-dir=.git --exclude="*.json" . || echo "No obvious hardcoded secrets found"
+          grep -r -n -i "password\|secret\|key\|token" --exclude-dir=.git --exclude-dir=env --exclude-dir=venv --exclude-dir=.venv --exclude="*.json" --exclude=".env" . || echo "No obvious hardcoded secrets found"
           
       - name: Validate no XOR encryption usage
         run: |
-          if grep -r "XOR\|xor" --exclude-dir=.git --exclude-dir=.pytest_cache --exclude="test_*.py" --exclude="*security*" .; then
+          if grep -r "XOR\|xor" --exclude-dir=.git --exclude-dir=env --exclude-dir=venv --exclude-dir=.venv --exclude-dir=.pytest_cache --exclude="test_*.py" --exclude="*security*" .; then
             echo "❌ XOR encryption found - this is insecure!"
             exit 1
           else
@@ -262,7 +262,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           mkdir -p docs
-          interrogate -v --exclude tests/ --fail-under=80 --generate-badge docs/docstring.svg .
+          interrogate -v --exclude tests/ --exclude env --exclude venv --exclude .venv --fail-under=80 --generate-badge docs/docstring.svg .
           if [ ! -f docs/docstring.svg ]; then
             echo "Docstring badge not generated"
             exit 1

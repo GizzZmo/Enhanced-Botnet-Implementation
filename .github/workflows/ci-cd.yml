@@ -34,8 +34,8 @@ jobs:
 
     - name: Lint code
       run: |
-        flake8 .
+        flake8 . --exclude=venv,.venv,env,.env,.git,__pycache__,.pytest_cache
 
     - name: Check formatting
       run: |
-        black --check .
+        black --check --extend-exclude "(^|/)(\\.venv|venv|env|ENV|\\.env)" .
