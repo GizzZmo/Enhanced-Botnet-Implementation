@@ -42,8 +42,18 @@ python botnet_controller.py --help    # See all options
 
 ---
 
+## ⚡ Vital Signs <a id="vital-signs"></a>
+
+- **Status**: Actively maintained for educational and research use
+- **Primary Stack**: Python 3.8+ with asyncio and robust cryptographic features
+- **CI/CD**: Multi-workflow pipelines for testing, quality, and assets (see badges above)
+- **License**: Educational Use Only ([LICENSE](LICENSE))
+
+---
+
 ## 🎯 Table of Contents
 
+- [Vital Signs](#vital-signs)
 - [Purpose & Overview](#-purpose--overview)
 - [Architecture](#-architecture)
 - [Key Features](#-key-features)
