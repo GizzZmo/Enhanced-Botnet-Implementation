@@ -1,4 +1,3 @@
-[![Enhanced CI/CD Pipeline](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci.yml/badge.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci.yml)
 [![Core CI/CD Workflow](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci-cd.yml)
 [![Assets & Artifacts](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/assets.yml/badge.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/assets.yml)
 [![Security Scan](https://img.shields.io/badge/security-scanned-green.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions)
