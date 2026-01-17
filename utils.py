@@ -567,8 +567,8 @@ def generate_secure_token(length: int = 32, url_safe: bool = True) -> str:
         raise ValueError("Token length must be positive")
 
     if url_safe:
-        # Base64 expands data by ~4/3, so request a few extra bytes then trim.
-        bytes_needed = math.ceil(length * 4 / 3)
+        # Base64 encoding yields ~4 chars per 3 bytes; request just enough then trim.
+        bytes_needed = math.ceil(length * 3 / 4)
         return secrets.token_urlsafe(bytes_needed)[:length]
 
     # Hex tokens restrict output to [0-9a-f] characters.
