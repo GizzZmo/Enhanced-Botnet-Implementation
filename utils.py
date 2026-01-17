@@ -568,10 +568,10 @@ def generate_secure_token(length: int = 32, url_safe: bool = True) -> str:
 
     if url_safe:
         # token_urlsafe expects number of bytes; overshoot slightly then trim.
-        bytes_needed = math.ceil(length * 3 / 4)
+        bytes_needed = math.ceil(length * 4 / 3)
         return secrets.token_urlsafe(bytes_needed)[:length]
 
-    # Hex tokens are naturally URL-safe but restricted to hex characters.
+    # Hex tokens use only [0-9a-f] characters which are URL-safe.
     return secrets.token_hex(math.ceil(length / 2))[:length]
 
 
