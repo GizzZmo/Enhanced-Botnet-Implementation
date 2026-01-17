@@ -18,6 +18,8 @@ import asyncio
 import ssl
 import json
 import re
+import secrets
+import math
 from typing import Optional, Union, Dict, Any, List
 from pathlib import Path
 
@@ -548,6 +550,29 @@ def generate_bot_id(ip_address: str, additional_data: str = "") -> str:
     """
     data = f"{ip_address}:{additional_data}:{datetime.datetime.now().isoformat()}"
     return hashlib.sha256(data.encode()).hexdigest()[:8]
+
+
+def generate_secure_token(length: int = 32, url_safe: bool = True) -> str:
+    """
+    Generate a cryptographically secure token.
+
+    Args:
+        length: Desired token length (must be positive).
+        url_safe: Whether to return a URL-safe token.
+
+    Returns:
+        Secure random token string of the requested length.
+    """
+    if length <= 0:
+        raise ValueError("Token length must be positive")
+
+    if url_safe:
+        # token_urlsafe expects number of bytes; overshoot slightly then trim.
+        bytes_needed = math.ceil(length * 3 / 4)
+        return secrets.token_urlsafe(bytes_needed)[:length]
+
+    # Hex tokens are naturally URL-safe but restricted to hex characters.
+    return secrets.token_hex(math.ceil(length / 2))[:length]
 
 
 def create_command_payload(

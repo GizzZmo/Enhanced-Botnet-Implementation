@@ -21,6 +21,7 @@ from utils import (
     BotTracker,
     TLSHelper,
     generate_bot_id,
+    generate_secure_token,
 )
 
 
@@ -217,6 +218,23 @@ class TestSecurityFeatures(unittest.TestCase):
         self.assertEqual(len(bot_id1), 8)
         self.assertEqual(len(bot_id2), 8)
         self.assertEqual(len(bot_id3), 8)
+
+    def test_generate_secure_token(self):
+        """Test secure token generation properties."""
+        token1 = generate_secure_token()
+        token2 = generate_secure_token()
+
+        self.assertEqual(len(token1), 32)
+        self.assertEqual(len(token2), 32)
+        self.assertNotEqual(token1, token2)
+        self.assertRegex(token1, r"^[A-Za-z0-9_-]+$")
+
+        hex_token = generate_secure_token(40, url_safe=False)
+        self.assertEqual(len(hex_token), 40)
+        self.assertRegex(hex_token, r"^[0-9a-f]+$")
+
+        with self.assertRaises(ValueError):
+            generate_secure_token(0)
 
     def test_tls_context_creation(self):
         """Test TLS context creation."""
