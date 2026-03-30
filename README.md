@@ -53,6 +53,7 @@ python botnet_controller.py --help    # See all options
 ## 🎯 Table of Contents
 
 - [Vital Signs](#vital-signs)
+- [Documentation & Wiki](#-documentation--wiki)
 - [Purpose & Overview](#-purpose--overview)
 - [Architecture](#-architecture)
 - [Key Features](#-key-features)
@@ -72,6 +73,17 @@ python botnet_controller.py --help    # See all options
 - [Ethical Usage Recommendations](#-ethical-usage-recommendations)
 - [Legal Notice](#-legal-notice)
 - [References](#-references)
+
+---
+
+## 📚 Documentation & Wiki
+
+- **Quick Start**: Step-by-step setup in [QUICKSTART.md](QUICKSTART.md)
+- **Dashboard Guide**: Cyberpunk UI details in [DASHBOARD.md](DASHBOARD.md)
+- **Technical Deep Dives**: See [TechnicalAnalysis.md](TechnicalAnalysis.md) and [THREADING_FIX_SUMMARY.md](THREADING_FIX_SUMMARY.md)
+- **Usability Updates**: Review [USABILITY_IMPROVEMENTS.md](USABILITY_IMPROVEMENTS.md)
+- **Contributor Guide**: Follow [CONTRIBUTING.md](CONTRIBUTING.md) for safe changes
+- **Wiki Hub**: Consolidated tips, commands, and references in [WIKI.md](WIKI.md)
 
 ---
 
