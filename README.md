@@ -56,6 +56,7 @@ python botnet_controller.py --help    # See all options
 - [Purpose & Overview](#-purpose--overview)
 - [Architecture](#-architecture)
 - [Key Features](#-key-features)
+- [Workflow Automation](#-workflow-automation)
 - [Security Enhancements](#-security-enhancements)
 - [Performance Improvements](#-performance-improvements)
 - [Project Structure](#-project-structure)
@@ -181,6 +182,35 @@ This enhanced version includes significant improvements over traditional impleme
 - **🔍 Code Quality**: Automated linting, formatting, and security scanning
 - **📚 Rich Documentation**: Detailed guides, examples, and best practices
 - **🤝 Contribution Guidelines**: Clear process for contributing safely and ethically
+
+---
+
+## 🤖 Workflow Automation
+
+- **Playbook-Driven Tasks**: `workflow_engine.py` supports JSON/YAML playbooks that define ordered tasks with dependencies (DAG-style) and triggers (e.g., `on_connect`).
+- **Per-Bot Execution State**: Playbooks are cloned per bot, so each connection runs its own task graph without blocking others.
+- **Async & Event-Driven**: Tasks dispatch asynchronously via the existing `bot_manager`, progressing automatically as dependencies complete.
+
+**Basic usage**
+1. Create a playbook file (e.g., `playbooks/initial_recon.json`):
+   ```json
+   {
+     "name": "Initial Reconnaissance",
+     "trigger": "on_connect",
+     "tasks": [
+       { "id": "get_sysinfo", "command": "sysinfo" },
+       { "id": "get_users", "command": "whoami", "depends_on": ["get_sysinfo"] },
+       { "id": "check_privs", "command": "net user", "depends_on": ["get_users"] }
+     ]
+   }
+   ```
+2. During server startup, initialize and load playbooks:
+   - `workflow_engine = WorkflowEngine(bot_manager)`
+   - `workflow_engine.load_playbook_from_json("playbooks/initial_recon.json")`
+3. On relevant events (e.g., after bot authentication), trigger workflows:
+   - `await workflow_engine.trigger_workflow(bot_id, "on_connect")`
+
+Tasks transition through `pending → running → completed/failed`; results are stored on each `Task` instance for inspection/logging.
 
 ---
 
