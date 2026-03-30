@@ -64,7 +64,6 @@ from utils import (
     create_command_payload,
 )
 
-
 CYBER_EDITOR_LANGUAGES: List[Dict[str, Any]] = [
     {
         "id": "javascript",

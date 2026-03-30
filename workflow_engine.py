@@ -31,24 +31,28 @@ class Playbook:
 
 class WorkflowEngine:
     def __init__(self, bot_manager):
-        self.bot_manager = bot_manager  # Reference to your existing bot management class
+        self.bot_manager = (
+            bot_manager  # Reference to your existing bot management class
+        )
         self.playbooks: Dict[str, Playbook] = {}
         self.active_workflows: Dict[str, Dict[str, Task]] = {}  # bot_id -> tasks
 
     def load_playbook_from_json(self, filepath: str):
         """Loads a playbook defining an automated sequence of actions."""
         try:
-            with open(filepath, 'r') as f:
+            with open(filepath, "r") as f:
                 data = json.load(f)
 
             tasks = []
             for t_data in data.get("tasks", []):
-                tasks.append(Task(
-                    task_id=t_data["id"],
-                    command=t_data["command"],
-                    args=t_data.get("args", []),
-                    depends_on=t_data.get("depends_on", [])
-                ))
+                tasks.append(
+                    Task(
+                        task_id=t_data["id"],
+                        command=t_data["command"],
+                        args=t_data.get("args", []),
+                        depends_on=t_data.get("depends_on", []),
+                    )
+                )
 
             pb = Playbook(name=data["name"], trigger=data["trigger"], tasks=tasks)
             self.playbooks[pb.name] = pb
@@ -83,17 +87,22 @@ class WorkflowEngine:
                 # Check dependencies
                 can_run = all(
                     workflow[dep].status == "completed"
-                    for dep in task.depends_on if dep in workflow
+                    for dep in task.depends_on
+                    if dep in workflow
                 )
 
                 if can_run:
                     task.status = "running"
-                    logger.info(f"[Bot {bot_id}] Executing automated task: {task.command}")
+                    logger.info(
+                        f"[Bot {bot_id}] Executing automated task: {task.command}"
+                    )
 
                     # Interfacing with your existing BotManager to send the command
                     try:
                         command_str = f"{task.command} {' '.join(task.args)}"
-                        result = await self.bot_manager.send_command(bot_id, command_str)
+                        result = await self.bot_manager.send_command(
+                            bot_id, command_str
+                        )
                         task.result = result
                         task.status = "completed"
                     except Exception as e:
