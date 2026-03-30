@@ -1,0 +1,21 @@
+{
+  "name": "Initial Reconnaissance",
+  "trigger": "on_connect",
+  "tasks": [
+    {
+      "id": "get_sysinfo",
+      "command": "sysinfo",
+      "depends_on": []
+    },
+    {
+      "id": "get_users",
+      "command": "whoami",
+      "depends_on": ["get_sysinfo"]
+    },
+    {
+      "id": "check_privs",
+      "command": "net user",
+      "depends_on": ["get_users"]
+    }
+  ]
+}
