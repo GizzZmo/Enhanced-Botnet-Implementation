@@ -24,6 +24,6 @@ pydocstyle
 typing_extensions
 
 # Testing tools
-pytest==7.3.1
+pytest==9.0.3
 pytest-asyncio
 pytest-cov
