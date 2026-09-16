@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Prepare assets bundle
         run: |
@@ -25,7 +25,7 @@ jobs:
           tar -czf dist/assets-bundle.tar.gz -C dist assets
 
       - name: Upload assets bundle
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: project-assets
           path: dist/assets-bundle.tar.gz
