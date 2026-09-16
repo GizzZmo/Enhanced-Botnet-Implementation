@@ -72,8 +72,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          pytest --cov=. --cov-report=xml --cov-report=term \
-            tests/ test_basic.py -v --tb=short
+          python -m pytest --cov=. --cov-report=xml --cov-report=term \
+            -v --tb=short
 
       - name: Upload coverage to Codecov
         if: matrix.python-version == '3.12'
@@ -345,7 +345,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Final comprehensive test
-        run: pytest tests/ test_basic.py -v --tb=short
+        run: python -m pytest -v --tb=short
 
       - name: Validate core components
         run: |
