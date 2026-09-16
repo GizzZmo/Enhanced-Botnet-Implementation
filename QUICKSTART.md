@@ -4,7 +4,7 @@ Get started with the Enhanced Botnet Implementation in minutes!
 
 ## Prerequisites
 
-- Python 3.8 or higher
+- Python 3.10 or higher
 - pip package manager
 - Internet connection (for installing dependencies)
 

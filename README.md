@@ -1,8 +1,9 @@
 [![Core CI/CD Workflow](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci-cd.yml/badge.svg?branch=main)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci-cd.yml?query=branch%3Amain)
+[![Enhanced CI/CD Pipeline](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/ci.yml?query=branch%3Amain)
 [![Assets & Artifacts](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/assets.yml/badge.svg?branch=main)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions/workflows/assets.yml?query=branch%3Amain)
 [![Security Scan](https://img.shields.io/badge/security-scanned-green.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation/actions)
 [![Code Quality](https://img.shields.io/badge/code%20quality-A-brightgreen.svg)](https://github.com/GizzZmo/Enhanced-Botnet-Implementation)
-[![Python Version](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://python.org)
+[![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/license-Educational%20Use%20Only-orange.svg)](LICENSE)
 
 # 🛡️ Enhanced Botnet Implementation
@@ -44,7 +45,7 @@ python botnet_controller.py --help    # See all options
 ## ⚡ Vital Signs <a id="vital-signs"></a>
 
 - **Status**: Actively maintained for educational and research use
-- **Primary Stack**: Python 3.8+ with asyncio and robust cryptographic features
+- **Primary Stack**: Python 3.10+ with asyncio and robust cryptographic features
 - **CI/CD**: Multi-workflow pipelines for testing, quality, and assets (see badges above)
 - **License**: Educational Use Only ([LICENSE](LICENSE))
 
@@ -727,7 +728,7 @@ pytest -k "async" -v
 
 Our CI/CD pipeline includes:
 
-- **Multi-Python Version Testing**: 3.8, 3.9, 3.10, 3.11, 3.12
+- **Multi-Python Version Testing**: 3.10, 3.11, 3.12
 - **Code Quality Checks**: Black, Flake8, MyPy
 - **Security Scanning**: Bandit, Safety, Semgrep
 - **Performance Benchmarks**: Automated performance regression testing

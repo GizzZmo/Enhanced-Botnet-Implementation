@@ -1,7 +1,7 @@
-# Core dependencies
+# Core dependencies (Python 3.10+ required; pytest 9 dropped 3.8/3.9)
 cryptography>=3.4.8
 
-# Web dashboard dependencies  
+# Web dashboard dependencies
 aiohttp>=3.8.0
 aiohttp-cors>=0.7.0
 
