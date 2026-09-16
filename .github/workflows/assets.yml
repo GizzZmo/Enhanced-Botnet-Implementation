@@ -2,7 +2,7 @@ name: Assets & Artifacts
 
 on:
   push:
-    branches: [main, develop, feature/**]
+    branches: [main, develop, "feature/**"]
   pull_request:
   workflow_dispatch:
 
